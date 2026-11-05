@@ -272,6 +272,12 @@ textarea:focus {
   color: #ffd166;
 }
 
+.badge-en-cines {
+  background: rgba(94, 176, 255, 0.22);
+  color: #9fd0ff;
+  border-color: rgba(94, 176, 255, 0.4);
+}
+
 .card-body {
   padding: 0.85rem 0.9rem 1rem;
   display: flex;

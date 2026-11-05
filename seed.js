@@ -380,5 +380,755 @@ window.CINE_SEED = [
     ],
     "verificado_en": "2026-11-05",
     "nota": "Pendiente: temporada 2 (en emisión; ~7/10 a 5 nov)."
+  },
+  {
+    "id": "tmdb:1571955",
+    "tipo": "pelicula",
+    "titulo": "Colisión",
+    "anio": 2026,
+    "generos": [
+      "Suspense",
+      "Drama",
+      "Crimen"
+    ],
+    "sinopsis": "España, 2013. Tras atracar un banco, un fatal accidente de auto saca a la luz la cara oculta de una banda de ladrones y desvela que las traiciones comenzaron mucho antes del robo.",
+    "poster": "https://image.tmdb.org/t/p/w500/sMPIiaOoyTr5o6s602KIVMJX3P2.jpg",
+    "trailer": "https://www.youtube.com/watch?v=Jk12Xo0-oDc",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/pelicula/cruzados",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch",
+      "Netflix Top 10"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "JustWatch ES ranking diario #1 (2026-11-06); Netflix Top 10 España #1 (26/10–1/11/2026)"
+  },
+  {
+    "id": "tmdb:1507696",
+    "tipo": "pelicula",
+    "titulo": "Apocalipsis Z: Nuevo mundo",
+    "anio": 2026,
+    "generos": [
+      "Acción",
+      "Suspense",
+      "Terror"
+    ],
+    "sinopsis": "Tras el brote del virus TSJ, las Islas Canarias son el último refugio de Europa. Cuando una misión viaja a Madrid en busca de suministros, Roberto se une al equipo con dudosas intenciones. Rodeados de infectados y lealtades divididas, deberán luchar por sobrevivir mientras afrontan un dilema moral: salvarse a sí mismos o arriesgarlo todo por lo que queda de humanidad.",
+    "poster": "https://image.tmdb.org/t/p/w500/c5LakPnLfzydW4YFUKfPeiODiWu.jpg",
+    "trailer": "https://www.youtube.com/watch?v=BIEzwpyawtw",
+    "streaming_es": [
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/pelicula/apocalipsis-z-nuevo-mundo",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "JustWatch ES ranking diario #2 (2026-11-06)"
+  },
+  {
+    "id": "tmdb:1083381",
+    "tipo": "pelicula",
+    "titulo": "Backrooms",
+    "anio": 2026,
+    "generos": [
+      "Terror",
+      "Misterio",
+      "Ciencia ficción"
+    ],
+    "sinopsis": "Una extraña puerta aparece en el sótano de una tienda de muebles. Cuando el paciente de una terapeuta desaparece en una dimensión más allá de la realidad, ella deberá adentrarse en lo desconocido para intentar rescatarlo.",
+    "poster": "https://image.tmdb.org/t/p/w500/ur2yYTVGPkEDmLdoQ1Obm2RKXuU.jpg",
+    "trailer": "https://www.youtube.com/watch?v=9EYRSmbsqzY",
+    "streaming_es": [
+      {
+        "plataforma": "Filmin",
+        "url": "https://www.justwatch.com/es/pelicula/backrooms",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/backrooms",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/pelicula/backrooms",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/backrooms",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/backrooms",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "JustWatch ES ranking diario #3 (2026-11-06)"
+  },
+  {
+    "id": "tmdb:293670",
+    "tipo": "pelicula",
+    "titulo": "El Extraño",
+    "anio": 2016,
+    "generos": [
+      "Terror",
+      "Misterio"
+    ],
+    "sinopsis": "La vida de un pueblo coreano es trastornada por una serie de asesinatos, salvajes y misteriosos, que azota por casualidad a la pequeña comunidad rural. Los rumores y las supersticiones se propagan a causa de la presencia, desde hace poco tiempo, de un anciano extranjero que vive como un ermita. Ante la incompetencia de la policía para encontrar al asesino y sin tener una explicación racional, algunos habitantes del pueblo buscan a un chamán. Jong-gu, un policía cuya familia está directamente amenazada, también cree que se trata de crímenes sobrenaturales…",
+    "poster": "https://image.tmdb.org/t/p/w500/sX4Wn09Fhu1jp0xtNx6kSvNc3w0.jpg",
+    "trailer": "https://www.youtube.com/watch?v=VUWAgbXSJ4Y",
+    "streaming_es": [
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/el-extrano",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/el-extrano",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "fuboTV",
+        "url": "https://www.justwatch.com/es/pelicula/el-extrano",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "por verificar"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "JustWatch ES ranking diario #4 (2026-11-06)",
+    "nota": "por verificar: JustWatch ES lista fuboTV, plataforma poco habitual en España"
+  },
+  {
+    "id": "tmdb:1078605",
+    "tipo": "pelicula",
+    "titulo": "Weapons",
+    "anio": 2025,
+    "generos": [
+      "Terror",
+      "Misterio"
+    ],
+    "sinopsis": "Cuando todos los alumnos de una misma clase, salvo uno, desaparecen misteriosamente la misma noche y exactamente a la misma hora, la pequeña ciudad donde viven se pregunta quién o qué está detrás de su desaparición.",
+    "poster": "https://image.tmdb.org/t/p/w500/nYqEQ3ltw0hHc1kBaNWr7Rb8WNZ.jpg",
+    "trailer": "https://www.youtube.com/watch?v=lZyASo3yaTA",
+    "streaming_es": [
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/weapons-2026",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/weapons-2026",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/weapons-2026",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/weapons-2026",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/weapons-2026",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/pelicula/weapons-2026",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/weapons-2026",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/weapons-2026",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch",
+      "Netflix Top 10"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "JustWatch ES ranking diario #10 (2026-11-06); Netflix Top 10 España #3 (26/10–1/11/2026)"
+  },
+  {
+    "id": "tmdb:687163",
+    "tipo": "pelicula",
+    "titulo": "Proyecto Salvación",
+    "anio": 2026,
+    "generos": [
+      "Ciencia ficción",
+      "Aventura"
+    ],
+    "sinopsis": "El profesor de ciencias Ryland Grace se despierta en una nave espacial a años luz de casa sin recordar quién es ni cómo ha llegado hasta allí. A medida que recupera la memoria, empieza a descubrir su misión: resolver el enigma de la misteriosa sustancia que provoca la extinción del sol. Deberá recurrir a sus conocimientos científicos y a sus ideas poco ortodoxas para salvar todo lo que hay en la Tierra de la extinción... pero una amistad inesperada significa que quizá no tenga que hacerlo solo.",
+    "poster": "https://image.tmdb.org/t/p/w500/7lwOTxajURKEWO6gI370NTrVdBO.jpg",
+    "trailer": "https://www.youtube.com/watch?v=in-lUuKi0eE",
+    "streaming_es": [
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/proyecto-salvacion",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/proyecto-salvacion",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV+",
+        "url": "https://www.justwatch.com/es/pelicula/proyecto-salvacion",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/proyecto-salvacion",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/proyecto-salvacion",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/pelicula/proyecto-salvacion",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/proyecto-salvacion",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/proyecto-salvacion",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "JustWatch ES ranking diario #9 (2026-11-06)"
+  },
+  {
+    "id": "tmdb:335535",
+    "tipo": "serie",
+    "titulo": "Grande de España",
+    "anio": 2026,
+    "generos": [
+      "Comedia",
+      "Drama"
+    ],
+    "sinopsis": "Don Leandro, un marqués arruinado que vive de las apariencias y sueña con ser nombrado Grande de España, ve una única salida a su desastre económico: vender su decadente palacete familiar en Madrid. La ocasión perfecta parece presentarse cuando la riquísima empresaria Sofía Carrington se interesa por la propiedad. Pero, a medida que avanzan las negociaciones - y las seducciones - queda claro que ​n​o son quienes aparentan ser.",
+    "poster": "https://image.tmdb.org/t/p/w500/76OXBz1TovntN6Ih9HRxWPvTGsL.jpg",
+    "trailer": "https://www.youtube.com/watch?v=p2mZHdSHKXw",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/grande-de-espana",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch",
+      "Netflix Top 10"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "Netflix Top 10 España series #1 (26/10–1/11/2026)"
+  },
+  {
+    "id": "tmdb:96677",
+    "tipo": "serie",
+    "titulo": "Lupin",
+    "anio": 2021,
+    "generos": [
+      "Crimen",
+      "Drama",
+      "Misterio"
+    ],
+    "sinopsis": "Inspirado por las aventuras de Arsène Lupin, el ladrón de guante blanco Assane Diop se propone vengar la injusticia sufrida por su padre a manos de una familia rica.",
+    "poster": "https://image.tmdb.org/t/p/w500/gZ2ocZUwqVetPz9AvVVhzrFrpPA.jpg",
+    "trailer": "https://www.youtube.com/watch?v=yX5Py7lL5dw",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/lupin",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch",
+      "Netflix Top 10"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "Netflix Top 10 España series #2 (26/10–1/11/2026)"
+  },
+  {
+    "id": "tmdb:333533",
+    "tipo": "serie",
+    "titulo": "El de Matthew Perry",
+    "anio": 2026,
+    "generos": [
+      "Documental"
+    ],
+    "sinopsis": "Esta serie documental narra el éxito en Hollywood, el activismo y la trágica muerte de la popular estrella de ‘Friends’ según lo cuentan sus allegados.",
+    "poster": "https://image.tmdb.org/t/p/w500/zDSjGvywwyWUqnMIpYYwFDyA7Az.jpg",
+    "trailer": "https://www.youtube.com/watch?v=_iM1AOFxoDI",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/the-one-about-matthew-perry",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch",
+      "Netflix Top 10"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "Netflix Top 10 España series #3 (26/10–1/11/2026)"
+  },
+  {
+    "id": "tmdb:250923",
+    "tipo": "serie",
+    "titulo": "Nadie quiere esto",
+    "anio": 2024,
+    "generos": [
+      "Comedia",
+      "Drama"
+    ],
+    "sinopsis": "Una agnóstica podcastera sobre sexo y un rabino recién separado se enamoran, pero ¿sobrevivirá su relación a unas vidas tan radicalmente opuestas y a sus entrometidas familias?",
+    "poster": "https://image.tmdb.org/t/p/w500/kiMhxXmkmqtpeY9jB8il3KajrDu.jpg",
+    "trailer": "https://www.youtube.com/watch?v=Xn2PsXD8m4A",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/untitled-kristen-bell-netflix-series",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch",
+      "Netflix Top 10"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "Netflix Top 10 España series #6 (26/10–1/11/2026)"
+  },
+  {
+    "id": "tmdb:285322",
+    "tipo": "serie",
+    "titulo": "Bajo la superficie",
+    "anio": 2026,
+    "generos": [
+      "Drama",
+      "Misterio"
+    ],
+    "sinopsis": "Una misteriosa criatura marina siembra el terror en un pequeño pueblo de Terranova y un curtido pescador y su familia se convierten en la única esperanza de sus vecinos.",
+    "poster": "https://image.tmdb.org/t/p/w500/mieCT53TaHGVVRdeq8Bx3VwtgIW.jpg",
+    "trailer": "https://www.youtube.com/watch?v=QWKZUHewy1k",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/bajo-la-superficie-2026",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch",
+      "Netflix Top 10"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "Netflix Top 10 España series #7 (26/10–1/11/2026)"
+  },
+  {
+    "id": "tmdb:236235",
+    "tipo": "serie",
+    "titulo": "The Gentlemen: La serie",
+    "anio": 2024,
+    "generos": [
+      "Comedia",
+      "Drama",
+      "Crimen"
+    ],
+    "sinopsis": "Cuando Eddie hereda la finca de su aristocrática familia, descubre que alberga una enorme plantación de marihuana... y que sus propietarios no piensan marcharse.",
+    "poster": "https://image.tmdb.org/t/p/w500/ia3jqovfKDRlIwbXjiWY6mKUA18.jpg",
+    "trailer": "https://www.youtube.com/watch?v=wyEOwHrpZH4",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/the-gentlemen",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06",
+    "popularidad_fuente": "JustWatch ES (puesto ~19 diario series); líder ranking mensual series sep 2026"
+  },
+  {
+    "id": "tmdb:1381071",
+    "tipo": "pelicula",
+    "titulo": "Godzilla Minus Zero",
+    "anio": 2026,
+    "generos": [
+      "Ciencia ficción",
+      "Terror",
+      "Acción"
+    ],
+    "sinopsis": "Dos años después de la devastación, Japón intenta recuperarse cuando una nueva amenaza de Godzilla aplasta la frágil paz.",
+    "poster": "https://image.tmdb.org/t/p/w500/taoPyKQTXh0FSwO5rin8Djrt20C.jpg",
+    "trailer": "https://www.youtube.com/watch?v=E-Q2tEgJ1ZI",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-11-06",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine",
+      "eCartelera"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1371661",
+    "tipo": "pelicula",
+    "titulo": "Sacamantecas",
+    "anio": 2026,
+    "generos": [
+      "Drama",
+      "Historia"
+    ],
+    "sinopsis": "Álava, finales del XIX: Ángela busca justicia por el asesinato de su hermana mientras el Sacamantecas aterroriza Vitoria al final de la guerra carlista.",
+    "poster": "https://image.tmdb.org/t/p/w500/7338FnwdzX9oNpODZIJH1OliUGV.jpg",
+    "trailer": "https://www.youtube.com/watch?v=BciNCff853c",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-11-06",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1522071",
+    "tipo": "pelicula",
+    "titulo": "Ruega por nosotras",
+    "anio": 2026,
+    "generos": [
+      "Drama"
+    ],
+    "sinopsis": "En 1974, Ana es internada en un reformatorio del Patronato de Protección a la Mujer en Madrid y sobrevive gracias a la amistad con otras jóvenes.",
+    "poster": "https://image.tmdb.org/t/p/w500/vgAae3dWzJoFuGQbRaKvSCmogDq.jpg",
+    "trailer": "https://www.youtube.com/watch?v=JYAoX8VqKw0",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-11-06",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1241803",
+    "tipo": "pelicula",
+    "titulo": "Los miserables",
+    "anio": 2026,
+    "generos": [
+      "Historia",
+      "Romance",
+      "Drama"
+    ],
+    "sinopsis": "Tras 19 años en prisión por robar pan, Jean Valjean busca redención mientras el inspector Javert lo persigue en una Francia convulsa.",
+    "poster": "https://image.tmdb.org/t/p/w500/jwRMUI6rGjAwkXHEqBlSnViT6gG.jpg",
+    "trailer": "https://www.youtube.com/watch?v=PyBTjrK43Hg",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-11-06",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1117898",
+    "tipo": "pelicula",
+    "titulo": "El gato con sombrero",
+    "anio": 2026,
+    "generos": [
+      "Animación",
+      "Fantasía",
+      "Comedia",
+      "Aventura",
+      "Familia"
+    ],
+    "sinopsis": "Un gato astuto llena de travesuras la vida de dos hermanos que se adaptan a una nueva ciudad.",
+    "poster": "https://image.tmdb.org/t/p/w500/8TW5oOMZbxaMFVgletpW0bxd2Aa.jpg",
+    "trailer": "https://www.youtube.com/watch?v=jz8pLlPhSeY",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-11-06",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine",
+      "Yelmo"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1405002",
+    "tipo": "pelicula",
+    "titulo": "Fiesta Pagäna",
+    "anio": 2026,
+    "generos": [
+      "Drama",
+      "Música"
+    ],
+    "sinopsis": "La historia no contada de Mägo de Oz, la banda que fusionó heavy metal y folk celta y revolucionó el rock español.",
+    "poster": "https://image.tmdb.org/t/p/w500/WGH8A7l5pQHlO13A7QJ2t4mjvN.jpg",
+    "trailer": "https://www.youtube.com/watch?v=_xupg1lHTEk",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-11-06",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:656908",
+    "tipo": "pelicula",
+    "titulo": "Ramayana: El Nacimiento de una Leyenda",
+    "anio": 2026,
+    "generos": [
+      "Fantasía",
+      "Acción",
+      "Aventura"
+    ],
+    "sinopsis": "Épica sobre un joven príncipe y una princesa cuyo matrimonio y exilio inician un viaje legendario de amor, deber y destino.",
+    "poster": "https://image.tmdb.org/t/p/w500/nzL1ySE6vdmR6RxXhE7gLggkp41.jpg",
+    "trailer": "https://www.youtube.com/watch?v=74nF-FWAS6M",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-11-06",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine",
+      "Yelmo"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1422041",
+    "tipo": "pelicula",
+    "titulo": "La bola negra",
+    "anio": 2026,
+    "generos": [
+      "Drama",
+      "Bélica"
+    ],
+    "sinopsis": "Tres hombres en tres épocas distintas ven entrelazadas sus vidas por el deseo, el dolor y la herencia, con una obra inacabada de Lorca como hilo.",
+    "poster": "https://image.tmdb.org/t/p/w500/t1azKLExwUxKj6v6m2L535evuRa.jpg",
+    "trailer": "https://www.youtube.com/watch?v=lBVxKt0gKDY",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-09-25",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1400940",
+    "tipo": "pelicula",
+    "titulo": "Clayface",
+    "anio": 2026,
+    "generos": [
+      "Terror",
+      "Suspense",
+      "Ciencia ficción"
+    ],
+    "sinopsis": "Tras ser desfigurado, el actor Matt Hagen se somete a un tratamiento experimental que lo transforma en una criatura de arcilla maleable en Gotham.",
+    "poster": "https://image.tmdb.org/t/p/w500/6ihSDJlBNcvoTWzSA0jonZyOXTs.jpg",
+    "trailer": "https://www.youtube.com/watch?v=OGO4Mqvo3jI",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-10-23",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1365224",
+    "tipo": "pelicula",
+    "titulo": "Karateka",
+    "anio": 2026,
+    "generos": [
+      "Drama"
+    ],
+    "sinopsis": "Biopic de Sandra Sánchez, que a los 39 años conquista el oro olímpico y se consagra como la mejor karateka de todos los tiempos.",
+    "poster": "https://image.tmdb.org/t/p/w500/bJh97VEUn9TWygQSrOOyJrwQXek.jpg",
+    "trailer": "https://www.youtube.com/watch?v=W0QNH-Nb9O4",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-10-30",
+    "nota": "En cines en España; streaming por verificar",
+    "fuentes": [
+      "TMDB",
+      "SensaCine",
+      "Yelmo"
+    ],
+    "verificado_en": "2026-11-06"
   }
 ];

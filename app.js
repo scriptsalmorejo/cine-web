@@ -134,7 +134,7 @@ const Storage = (() => {
   const KEY = "cine-web:v2";
 
   function empty() {
-    return { fichas: {}, lista: [] };
+    return { fichas: {}, lista: [], seedIds: [] };
   }
 
   function load() {
@@ -147,6 +147,8 @@ const Storage = (() => {
       return {
         fichas: data.fichas,
         lista: data.lista.map((row) => normalizeListaItem(row)),
+        // Ausente en v2 antigua: se normaliza en mergeSeedIntoDb
+        seedIds: Array.isArray(data.seedIds) ? data.seedIds.map(String) : null,
       };
     } catch {
       return null;
@@ -170,6 +172,7 @@ const Storage = (() => {
         lista: data.lista.map((row) =>
           normalizeListaItem(row, { mapViendoAPendiente: true })
         ),
+        seedIds: Array.isArray(data.seedIds) ? data.seedIds.map(String) : [],
       };
     }
     // Array plano legado → migrar a lista (+ fichas mínimas)
@@ -180,7 +183,7 @@ const Storage = (() => {
         fichas[item.id] = fichaFromLegacy(raw);
         return item;
       });
-      return { fichas, lista };
+      return { fichas, lista, seedIds: [] };
     }
     throw new Error("JSON no reconocido (se espera {fichas, lista} o un array)");
   }
@@ -236,6 +239,7 @@ const Storage = (() => {
   }
 
   function fichaFromLegacy(raw) {
+    const enCines = Boolean(raw.en_cines || raw.en_cartelera);
     return {
       id: String(raw.id || uid()),
       tipo: raw.tipo === "serie" ? "serie" : "pelicula",
@@ -253,6 +257,9 @@ const Storage = (() => {
       nota: raw.nota || "",
       fuentes: raw.fuentes || [],
       verificado_en: raw.verificado_en || null,
+      en_cines: enCines,
+      estreno_es: raw.estreno_es || null,
+      popularidad_fuente: raw.popularidad_fuente || "",
     };
   }
 
@@ -302,6 +309,7 @@ const state = {
     plataforma: "todas",
     genero: "todos",
     favoritas: false,
+    en_cines: false,
     orden: "anadido_desc",
   },
   editId: null,
@@ -358,6 +366,7 @@ function filtrarYOrdenar() {
       if (f.estado !== "todos" && t.estado !== f.estado) return false;
       if (f.tipo !== "todos" && t.tipo !== f.tipo) return false;
       if (f.favoritas && !t.favorita) return false;
+      if (f.en_cines && !t.en_cines) return false;
       if (f.plataforma !== "todas") {
         const ok = (t.plataformas || []).some((p) =>
           plataformaCoincideFiltro(p.nombre, f.plataforma)
@@ -417,18 +426,51 @@ function aplicarSeed(seedArr) {
     fichas[ficha.id] = ficha;
     lista.push(Storage.listaFromSeedFicha(ficha));
   }
-  state.db = { fichas, lista };
+  state.db = { fichas, lista, seedIds: Object.keys(fichas) };
   persist();
 }
 
+/**
+ * Fusiona el seed en una BD ya existente:
+ * - actualiza fichas por id (streaming, en_cines, etc.)
+ * - refresca snapshot plataformas de entradas ya en lista (sin tocar estado/★/notas/puntuación/visto_en)
+ * - añade como pendiente solo ids de seed nunca ofrecidos (seedIds)
+ * Migración: si seedIds es null, se inicializa con las fichas ya conocidas (así un borrado previo no reaparece).
+ */
+function mergeSeedIntoDb(seedArr) {
+  if (!state.db.fichas) state.db.fichas = {};
+  if (!Array.isArray(state.db.lista)) state.db.lista = [];
+  if (!Array.isArray(state.db.seedIds)) {
+    // null/ausente → migrar: lo ya conocido en fichas se considera ofrecido
+    state.db.seedIds = Object.keys(state.db.fichas);
+  }
+  const offered = new Set(state.db.seedIds.map(String));
+  for (const raw of seedArr) {
+    const ficha = Storage.fichaFromSeed(raw);
+    const id = ficha.id;
+    state.db.fichas[id] = { ...(state.db.fichas[id] || {}), ...ficha };
+
+    const row = state.db.lista.find((x) => x.id === id);
+    if (row) {
+      row.plataformas = snapshotPlataformasDesdeStreaming(ficha.streaming_es);
+    } else if (!offered.has(id)) {
+      state.db.lista.push(Storage.listaFromSeedFicha(ficha));
+    }
+    offered.add(id);
+  }
+  state.db.seedIds = [...offered];
+}
+
 async function ensureData() {
+  const seed = await loadSeedArray();
   const loaded = Storage.load();
   if (loaded && loaded.lista.length) {
     state.db = loaded;
+    mergeSeedIntoDb(seed);
+    persist();
     state.seedReady = true;
     return;
   }
-  const seed = await loadSeedArray();
   aplicarSeed(seed);
   state.seedReady = true;
 }
@@ -477,6 +519,9 @@ function addOrUpdateFromForm(data) {
     nota: state.db.fichas[id]?.nota || "",
     fuentes: state.db.fichas[id]?.fuentes || [],
     verificado_en: state.db.fichas[id]?.verificado_en || null,
+    en_cines: Boolean(state.db.fichas[id]?.en_cines),
+    estreno_es: state.db.fichas[id]?.estreno_es || null,
+    popularidad_fuente: state.db.fichas[id]?.popularidad_fuente || "",
   };
   state.db.fichas[id] = ficha;
 
@@ -568,6 +613,19 @@ function formatFecha(iso) {
   }
 }
 
+/** Fecha solo día (YYYY-MM-DD) en locale es-ES, sin desfase UTC. */
+function formatFechaDia(ymd) {
+  if (!ymd) return null;
+  const m = String(ymd).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return formatFecha(ymd);
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return d.toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 function labelEstado(e) {
   return e === "vista" ? "Vista" : "Pendiente";
 }
@@ -619,6 +677,8 @@ function renderFiltrosOpciones() {
   state.filtros.plataforma = platSel.value;
   state.filtros.genero = genSel.value;
   $("#filtro-favoritas").checked = state.filtros.favoritas;
+  const enCinesEl = $("#filtro-en-cines");
+  if (enCinesEl) enCinesEl.checked = state.filtros.en_cines;
 }
 
 function renderGrid() {
@@ -645,6 +705,7 @@ function renderGrid() {
           ${posterHtml(t)}
           <div class="badge-row">
             <span class="badge badge-tipo">${escapeHtml(labelEstado(t.estado))}</span>
+            ${t.en_cines ? `<span class="badge badge-en-cines">En cines${t.estreno_es ? ` · ${escapeHtml(formatFechaDia(t.estreno_es) || t.estreno_es)}` : ""}</span>` : ""}
           </div>
           <button type="button" class="fav-btn ${t.favorita ? "on" : ""}" data-action="fav" title="Favorita" aria-label="Favorita" aria-pressed="${t.favorita}">★</button>
         </div>
@@ -842,6 +903,15 @@ function openDetalle(t) {
             : ""
         }
         <div class="meta">${escapeHtml(meta)}</div>
+        ${
+          t.en_cines
+            ? `<div class="detail-section"><h4>Cartelera</h4><p style="margin:0"><span class="badge badge-en-cines">En cines</span>${
+                t.estreno_es
+                  ? ` · Estreno ES: ${escapeHtml(formatFechaDia(t.estreno_es) || t.estreno_es)}`
+                  : ""
+              }</p></div>`
+            : ""
+        }
         <div class="detail-section">
           <h4>Géneros</h4>
           <div class="chips">${(t.generos || []).map((g) => `<span class="chip">${escapeHtml(g)}</span>`).join("") || "—"}</div>
@@ -913,6 +983,10 @@ function bindEvents() {
       const map = new Map(state.db.lista.map((t) => [t.id, t]));
       imported.lista.forEach((t) => map.set(t.id, t));
       state.db.lista = [...map.values()];
+      if (Array.isArray(imported.seedIds) && imported.seedIds.length) {
+        const offered = new Set([...(state.db.seedIds || []), ...imported.seedIds].map(String));
+        state.db.seedIds = [...offered];
+      }
       persist();
       renderAll();
       toast(`Importados ${imported.lista.length} títulos`);
@@ -950,6 +1024,13 @@ function bindEvents() {
     state.filtros.favoritas = e.target.checked;
     renderGrid();
   });
+  const filtroEnCines = $("#filtro-en-cines");
+  if (filtroEnCines) {
+    filtroEnCines.addEventListener("change", (e) => {
+      state.filtros.en_cines = e.target.checked;
+      renderGrid();
+    });
+  }
 
   $("#grid").addEventListener("click", (e) => {
     const btn = e.target.closest("[data-action]");
