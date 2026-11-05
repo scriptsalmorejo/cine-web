@@ -6,7 +6,7 @@
   <meta name="description" content="Lista personal de películas y series en España, con catálogo verificado (TMDB + JustWatch)." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <title>Cine Web — Películas y series</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20261106d" />
 </head>
 <body>
   <div class="app">
@@ -23,14 +23,9 @@
         <button type="button" class="btn" id="btn-exportar">Exportar JSON</button>
         <button type="button" class="btn" id="btn-importar">Importar JSON</button>
         <input type="file" id="file-import" accept="application/json,.json" class="sr-only" />
-        <button type="button" class="btn" id="btn-reseedar" title="Sustituye la lista por el seed">Restablecer seed</button>
+        <button type="button" class="btn" id="btn-reseedar" title="Quita todos los títulos de tu lista; quedan Sin marcar">Vaciar mi lista</button>
       </div>
     </header>
-
-    <nav class="tabs" role="tablist" aria-label="Vistas">
-      <button type="button" class="tab is-active" role="tab" id="tab-lista" aria-selected="true" data-vista="lista">Mi lista</button>
-      <button type="button" class="tab" role="tab" id="tab-explorar" aria-selected="false" data-vista="explorar">Explorar</button>
-    </nav>
 
     <div class="stats" id="stats" aria-live="polite"></div>
 
@@ -38,11 +33,12 @@
       <label class="sr-only" for="busqueda">Buscar</label>
       <input class="search" id="busqueda" type="search" placeholder="Buscar título, género, notas…" autocomplete="off" />
 
-      <label class="sr-only filtro-solo-lista" for="filtro-estado">Estado</label>
-      <select class="select filtro-solo-lista" id="filtro-estado">
+      <label class="sr-only" for="filtro-estado">Estado</label>
+      <select class="select" id="filtro-estado">
         <option value="todos">Todos los estados</option>
         <option value="pendiente">Pendiente</option>
         <option value="vista">Vista</option>
+        <option value="sin_marcar">Sin marcar</option>
       </select>
 
       <label class="sr-only" for="filtro-tipo">Tipo</label>
@@ -62,7 +58,7 @@
         <option value="todos">Todos los géneros</option>
       </select>
 
-      <label class="check-inline filtro-solo-lista" for="filtro-favoritas">
+      <label class="check-inline" for="filtro-favoritas">
         <input type="checkbox" id="filtro-favoritas" />
         Solo favoritas
       </label>
@@ -74,14 +70,14 @@
 
       <label class="sr-only" for="filtro-orden">Orden</label>
       <select class="select" id="filtro-orden">
-        <option value="anadido_desc" class="orden-solo-lista">Más recientes primero</option>
-        <option value="anadido_asc" class="orden-solo-lista">Más antiguos primero</option>
+        <option value="anadido_desc">Más recientes primero</option>
+        <option value="anadido_asc">Más antiguos primero</option>
         <option value="titulo_asc">Título A→Z</option>
         <option value="titulo_desc">Título Z→A</option>
         <option value="anio_desc">Año ↓</option>
         <option value="anio_asc">Año ↑</option>
-        <option value="puntuacion_desc" class="orden-solo-lista">Puntuación ↓</option>
-        <option value="puntuacion_asc" class="orden-solo-lista">Puntuación ↑</option>
+        <option value="puntuacion_desc">Puntuación ↓</option>
+        <option value="puntuacion_asc">Puntuación ↑</option>
       </select>
     </div>
 
@@ -172,8 +168,8 @@
     </div>
   </div>
 
-  <script src="seed.js"></script>
-  <script src="catalogo.js"></script>
-  <script src="app.js"></script>
+  <script src="seed.js?v=20261106d"></script>
+  <script src="catalogo.js?v=20261106d"></script>
+  <script src="app.js?v=20261106d"></script>
 </body>
 </html>

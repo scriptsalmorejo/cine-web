@@ -22,6 +22,9 @@ const TIPO_STREAM = {
   buy: "Compra",
 };
 
+const MOBLAND_ID = "tmdb:247718";
+const MIGRACION_SIN_MARCAR = "sin-marcar-1";
+
 /** Alias para filtro: nombre mostrado → canónicos que también hacen match */
 const FILTRO_ALIAS = {
   Max: ["Max", "Max Amazon Channel"],
@@ -134,7 +137,7 @@ const Storage = (() => {
   const KEY = "cine-web:v2";
 
   function empty() {
-    return { fichas: {}, lista: [], seedIds: [] };
+    return { fichas: {}, lista: [], seedIds: [], migracion: null };
   }
 
   function load() {
@@ -147,8 +150,8 @@ const Storage = (() => {
       return {
         fichas: data.fichas,
         lista: data.lista.map((row) => normalizeListaItem(row)),
-        // Ausente en v2 antigua: se normaliza en mergeSeedIntoDb
         seedIds: Array.isArray(data.seedIds) ? data.seedIds.map(String) : null,
+        migracion: data.migracion || null,
       };
     } catch {
       return null;
@@ -173,6 +176,7 @@ const Storage = (() => {
           normalizeListaItem(row, { mapViendoAPendiente: true })
         ),
         seedIds: Array.isArray(data.seedIds) ? data.seedIds.map(String) : [],
+        migracion: data.migracion || null,
       };
     }
     // Array plano legado → migrar a lista (+ fichas mínimas)
@@ -183,7 +187,7 @@ const Storage = (() => {
         fichas[item.id] = fichaFromLegacy(raw);
         return item;
       });
-      return { fichas, lista, seedIds: [] };
+      return { fichas, lista, seedIds: [], migracion: null };
     }
     throw new Error("JSON no reconocido (se espera {fichas, lista} o un array)");
   }
@@ -303,7 +307,6 @@ const Storage = (() => {
 const state = {
   db: Storage.empty(),
   catalogo: [], // fichas de data/catalogo.json (nunca auto-añadidas a la lista)
-  vista: "lista", // "lista" | "explorar"
   filtros: {
     q: "",
     estado: "todos",
@@ -333,7 +336,16 @@ function contadores() {
   const pendientes = state.db.lista.filter((t) => t.estado === "pendiente").length;
   const vistas = state.db.lista.filter((t) => t.estado === "vista").length;
   const favoritas = state.db.lista.filter((t) => t.favorita).length;
-  return { total: state.db.lista.length, pendientes, vistas, favoritas };
+  const sinMarcar = catalogoFueraDeLista().length;
+  const total = state.db.lista.length + sinMarcar;
+  return {
+    total,
+    enLista: state.db.lista.length,
+    pendientes,
+    vistas,
+    favoritas,
+    sinMarcar,
+  };
 }
 
 function idsEnListaSet() {
@@ -346,96 +358,58 @@ function catalogoFueraDeLista() {
   return state.catalogo.filter((f) => f && f.id && !enLista.has(f.id));
 }
 
+function asSinMarcar(ficha) {
+  return {
+    ...ficha,
+    plataformas: snapshotPlataformasDesdeStreaming(ficha.streaming_es),
+    estado: "sin_marcar",
+    favorita: false,
+    puntuacion: null,
+    notas: "",
+    anadido_en: null,
+    visto_en: null,
+    temporada: null,
+    _sinMarcar: true,
+  };
+}
+
+/** Todas las fichas visibles: lista del usuario + catálogo sin marcar. */
+function todosLosTitulos() {
+  const marked = state.db.lista.map((row) => getMerged(row.id)).filter(Boolean);
+  const unmarked = catalogoFueraDeLista().map(asSinMarcar);
+  return marked.concat(unmarked);
+}
+
 function plataformasParaFiltro() {
   const extras = new Set();
   const addPlat = (nombre) => {
     if (!nombre || nombre === "Max Amazon Channel") return;
     if (!PLATAFORMAS_ES.includes(nombre)) extras.add(nombre);
   };
-  if (state.vista === "explorar") {
-    catalogoFueraDeLista().forEach((f) => {
-      snapshotPlataformasDesdeStreaming(f.streaming_es).forEach((p) => addPlat(p.nombre));
-    });
-  } else {
-    state.db.lista.forEach((row) =>
-      (row.plataformas || []).forEach((p) => addPlat(p.nombre))
-    );
-  }
+  todosLosTitulos().forEach((t) =>
+    (t.plataformas || []).forEach((p) => addPlat(p.nombre))
+  );
   const extraList = [...extras].sort((a, b) => a.localeCompare(b, "es"));
   return [...PLATAFORMAS_ES, ...extraList];
 }
 
 function generosDisponibles() {
   const set = new Set();
-  if (state.vista === "explorar") {
-    catalogoFueraDeLista().forEach((f) => (f.generos || []).forEach((g) => set.add(g)));
-  } else {
-    state.db.lista.forEach((row) => {
-      const f = state.db.fichas[row.id];
-      (f?.generos || []).forEach((g) => set.add(g));
-    });
-  }
+  todosLosTitulos().forEach((t) => (t.generos || []).forEach((g) => set.add(g)));
   return [...set].sort((a, b) => a.localeCompare(b, "es"));
 }
 
 function filtrarYOrdenar() {
   const f = state.filtros;
   const q = f.q.trim().toLowerCase();
-  let list = state.db.lista
-    .map((row) => getMerged(row.id))
-    .filter(Boolean)
-    .filter((t) => {
-      if (f.estado !== "todos" && t.estado !== f.estado) return false;
-      if (f.tipo !== "todos" && t.tipo !== f.tipo) return false;
-      if (f.favoritas && !t.favorita) return false;
-      if (f.en_cines && !t.en_cines) return false;
-      if (f.plataforma !== "todas") {
-        const ok = (t.plataformas || []).some((p) =>
-          plataformaCoincideFiltro(p.nombre, f.plataforma)
-        );
-        if (!ok) return false;
-      }
-      if (f.genero !== "todos" && !(t.generos || []).includes(f.genero)) return false;
-      if (q) {
-        const blob = [
-          t.titulo,
-          t.titulo_original,
-          t.sinopsis,
-          t.notas,
-          (t.generos || []).join(" "),
-          (t.plataformas || []).map((p) => p.nombre).join(" "),
-        ]
-          .join(" ")
-          .toLowerCase();
-        if (!blob.includes(q)) return false;
-      }
-      return true;
-    });
-
-  const cmp = {
-    anadido_desc: (a, b) => String(b.anadido_en).localeCompare(String(a.anadido_en)),
-    anadido_asc: (a, b) => String(a.anadido_en).localeCompare(String(b.anadido_en)),
-    titulo_asc: (a, b) => a.titulo.localeCompare(b.titulo, "es"),
-    titulo_desc: (a, b) => b.titulo.localeCompare(a.titulo, "es"),
-    anio_desc: (a, b) => (b.anio || 0) - (a.anio || 0),
-    anio_asc: (a, b) => (a.anio || 0) - (b.anio || 0),
-    puntuacion_desc: (a, b) => (b.puntuacion || 0) - (a.puntuacion || 0),
-    puntuacion_asc: (a, b) => (a.puntuacion || 0) - (b.puntuacion || 0),
-  };
-  list.sort(cmp[f.orden] || cmp.anadido_desc);
-  return list;
-}
-
-function filtrarCatalogoExplorar() {
-  const f = state.filtros;
-  const q = f.q.trim().toLowerCase();
-  let list = catalogoFueraDeLista().map((ficha) => ({
-    ...ficha,
-    plataformas: snapshotPlataformasDesdeStreaming(ficha.streaming_es),
-    _explorar: true,
-  }));
-  list = list.filter((t) => {
+  let list = todosLosTitulos().filter((t) => {
+    if (f.estado === "sin_marcar") {
+      if (!t._sinMarcar) return false;
+    } else if (f.estado !== "todos") {
+      if (t._sinMarcar || t.estado !== f.estado) return false;
+    }
     if (f.tipo !== "todos" && t.tipo !== f.tipo) return false;
+    if (f.favoritas && (t._sinMarcar || !t.favorita)) return false;
     if (f.en_cines && !t.en_cines) return false;
     if (f.plataforma !== "todas") {
       const ok = (t.plataformas || []).some((p) =>
@@ -449,6 +423,7 @@ function filtrarCatalogoExplorar() {
         t.titulo,
         t.titulo_original,
         t.sinopsis,
+        t.notas,
         (t.generos || []).join(" "),
         (t.plataformas || []).map((p) => p.nombre).join(" "),
       ]
@@ -458,17 +433,33 @@ function filtrarCatalogoExplorar() {
     }
     return true;
   });
+
+  const unmarkedLast = (cmpFn) => (a, b) => {
+    const aU = a._sinMarcar ? 1 : 0;
+    const bU = b._sinMarcar ? 1 : 0;
+    if (aU !== bU) return aU - bU;
+    return cmpFn(a, b);
+  };
+
   const cmp = {
-    anadido_desc: (a, b) => String(b.titulo || "").localeCompare(String(a.titulo || ""), "es"),
-    anadido_asc: (a, b) => String(a.titulo || "").localeCompare(String(b.titulo || ""), "es"),
+    anadido_desc: unmarkedLast((a, b) =>
+      String(b.anadido_en || "").localeCompare(String(a.anadido_en || ""))
+    ),
+    anadido_asc: unmarkedLast((a, b) =>
+      String(a.anadido_en || "").localeCompare(String(b.anadido_en || ""))
+    ),
     titulo_asc: (a, b) => a.titulo.localeCompare(b.titulo, "es"),
     titulo_desc: (a, b) => b.titulo.localeCompare(a.titulo, "es"),
     anio_desc: (a, b) => (b.anio || 0) - (a.anio || 0),
     anio_asc: (a, b) => (a.anio || 0) - (b.anio || 0),
-    puntuacion_desc: (a, b) => a.titulo.localeCompare(b.titulo, "es"),
-    puntuacion_asc: (a, b) => a.titulo.localeCompare(b.titulo, "es"),
+    puntuacion_desc: unmarkedLast(
+      (a, b) => (b.puntuacion || 0) - (a.puntuacion || 0)
+    ),
+    puntuacion_asc: unmarkedLast(
+      (a, b) => (a.puntuacion || 0) - (b.puntuacion || 0)
+    ),
   };
-  list.sort(cmp[f.orden] || cmp.titulo_asc);
+  list.sort(cmp[f.orden] || cmp.anadido_desc);
   return list;
 }
 
@@ -499,9 +490,9 @@ async function loadCatalogoArray() {
   }
 }
 
-function aplicarCatalogo(rawArr) {
+function aplicarCatalogoUnion(seedArr, catalogArr) {
   const byId = new Map();
-  for (const raw of rawArr || []) {
+  for (const raw of [...(seedArr || []), ...(catalogArr || [])]) {
     const ficha = Storage.fichaFromSeed(raw);
     if (!ficha.id) continue;
     byId.set(ficha.id, ficha);
@@ -509,61 +500,97 @@ function aplicarCatalogo(rawArr) {
   state.catalogo = [...byId.values()];
 }
 
-function aplicarSeed(seedArr) {
-  const fichas = {};
-  const lista = [];
-  for (const raw of seedArr) {
-    const ficha = Storage.fichaFromSeed(raw);
-    fichas[ficha.id] = ficha;
-    lista.push(Storage.listaFromSeedFicha(ficha));
-  }
-  state.db = { fichas, lista, seedIds: Object.keys(fichas) };
+function fichaDesdeCatalogo(id) {
+  return state.catalogo.find((f) => f.id === id) || state.db.fichas[id] || null;
+}
+
+/** Notas por defecto del seed antiguo (auto-alta sin tocar). */
+function notasDefaultSeed(id) {
+  if (id === MOBLAND_ID) return new Set(["", "Temporada 2"]);
+  return new Set([""]);
+}
+
+/** Estado inicial: lista vacía; las 53 fichas aparecen como Sin marcar. */
+function aplicarEstadoFresco() {
+  const seedIds = state.catalogo.map((f) => f.id);
+  state.db = {
+    fichas: {},
+    lista: [],
+    // Marcar el catálogo semilla como ya «ofrecido» para no auto-añadir nada
+    seedIds,
+    migracion: MIGRACION_SIN_MARCAR,
+  };
   persist();
 }
 
 /**
- * Fusiona el seed en una BD ya existente:
- * - actualiza fichas por id (streaming, en_cines, etc.)
- * - refresca snapshot plataformas de entradas ya en lista (sin tocar estado/★/notas/puntuación/visto_en)
- * - añade como pendiente solo ids de seed nunca ofrecidos (seedIds)
- * Migración: si seedIds es null, se inicializa con las fichas ya conocidas (así un borrado previo no reaparece).
+ * Quita altas automáticas del seed que el usuario no tocó
+ * (pendiente, sin favorita/puntuación/visto, notas vacías o default tipo «Temporada 2»).
  */
-function mergeSeedIntoDb(seedArr) {
-  if (!state.db.fichas) state.db.fichas = {};
-  if (!Array.isArray(state.db.lista)) state.db.lista = [];
-  if (!Array.isArray(state.db.seedIds)) {
-    // null/ausente → migrar: lo ya conocido en fichas se considera ofrecido
-    state.db.seedIds = Object.keys(state.db.fichas);
-  }
-  const offered = new Set(state.db.seedIds.map(String));
-  for (const raw of seedArr) {
-    const ficha = Storage.fichaFromSeed(raw);
-    const id = ficha.id;
-    state.db.fichas[id] = { ...(state.db.fichas[id] || {}), ...ficha };
-
-    const row = state.db.lista.find((x) => x.id === id);
-    if (row) {
-      row.plataformas = snapshotPlataformasDesdeStreaming(ficha.streaming_es);
-    } else if (!offered.has(id)) {
-      state.db.lista.push(Storage.listaFromSeedFicha(ficha));
+function migrarSinMarcar1(seedArr) {
+  const seedIdSet = new Set((seedArr || []).map((r) => String(r.id)));
+  const kept = [];
+  for (const row of state.db.lista) {
+    const id = String(row.id);
+    if (!seedIdSet.has(id)) {
+      kept.push(row); // alta manual / catálogo
+      continue;
     }
-    offered.add(id);
+    const notas = String(row.notas || "").trim();
+    const untouched =
+      row.estado === "pendiente" &&
+      !row.favorita &&
+      row.puntuacion == null &&
+      !row.visto_en &&
+      notasDefaultSeed(id).has(notas);
+    if (untouched) continue;
+    kept.push(row);
   }
+  state.db.lista = kept;
+
+  const offered = new Set(
+    (Array.isArray(state.db.seedIds) ? state.db.seedIds : []).map(String)
+  );
+  for (const id of seedIdSet) offered.add(id);
   state.db.seedIds = [...offered];
+}
+
+/** Refresca ficha + snapshot de plataformas para ids ya en lista (sin tocar campos personales). */
+function syncFichasListaDesdeCatalogo() {
+  if (!state.db.fichas) state.db.fichas = {};
+  for (const row of state.db.lista) {
+    const ficha = fichaDesdeCatalogo(row.id);
+    if (!ficha) continue;
+    state.db.fichas[row.id] = { ...(state.db.fichas[row.id] || {}), ...ficha };
+    row.plataformas = snapshotPlataformasDesdeStreaming(ficha.streaming_es);
+  }
 }
 
 async function ensureData() {
   const seed = await loadSeedArray();
+  const catalogExtra = await loadCatalogoArray();
+  aplicarCatalogoUnion(seed, catalogExtra);
+
   const loaded = Storage.load();
-  if (loaded && loaded.lista.length) {
-    state.db = loaded;
-    mergeSeedIntoDb(seed);
+  if (loaded) {
+    state.db = {
+      fichas: loaded.fichas || {},
+      lista: Array.isArray(loaded.lista) ? loaded.lista : [],
+      seedIds: loaded.seedIds,
+      migracion: loaded.migracion || null,
+    };
+    if (state.db.migracion !== MIGRACION_SIN_MARCAR) {
+      migrarSinMarcar1(seed);
+      state.db.migracion = MIGRACION_SIN_MARCAR;
+    }
+    if (!Array.isArray(state.db.seedIds)) {
+      state.db.seedIds = (seed || []).map((r) => String(r.id));
+    }
+    syncFichasListaDesdeCatalogo();
     persist();
   } else {
-    aplicarSeed(seed);
+    aplicarEstadoFresco();
   }
-  // Catálogo de Explorar: nunca se auto-añade a la lista
-  aplicarCatalogo(await loadCatalogoArray());
   state.seedReady = true;
 }
 
@@ -703,17 +730,7 @@ function getMergedOrCatalog(id) {
   if (merged) return merged;
   const ficha = getFichaExplorar(id);
   if (!ficha) return null;
-  return {
-    ...ficha,
-    plataformas: snapshotPlataformasDesdeStreaming(ficha.streaming_es),
-    _explorar: true,
-    estado: null,
-    favorita: false,
-    puntuacion: null,
-    notas: "",
-    anadido_en: null,
-    visto_en: null,
-  };
+  return asSinMarcar(ficha);
 }
 
 function borrarDeLista(id) {
@@ -780,7 +797,9 @@ function formatFechaDia(ymd) {
 }
 
 function labelEstado(e) {
-  return e === "vista" ? "Vista" : "Pendiente";
+  if (e === "vista") return "Vista";
+  if (e === "sin_marcar") return "Sin marcar";
+  return "Pendiente";
 }
 
 function posterHtml(t) {
@@ -801,52 +820,13 @@ function plataformasHtml(plataformas) {
     .join("");
 }
 
-function setVista(vista) {
-  state.vista = vista === "explorar" ? "explorar" : "lista";
-  document.body.classList.toggle("vista-explorar", state.vista === "explorar");
-  $$(".tabs .tab").forEach((btn) => {
-    const active = btn.dataset.vista === state.vista;
-    btn.classList.toggle("is-active", active);
-    btn.setAttribute("aria-selected", active ? "true" : "false");
-  });
-  const busqueda = $("#busqueda");
-  if (busqueda) {
-    busqueda.placeholder =
-      state.vista === "explorar"
-        ? "Buscar en el catálogo…"
-        : "Buscar título, género, notas…";
-  }
-  // Si el orden actual es solo-lista y estamos en explorar, caer a título
-  if (
-    state.vista === "explorar" &&
-    ["anadido_desc", "anadido_asc", "puntuacion_desc", "puntuacion_asc"].includes(
-      state.filtros.orden
-    )
-  ) {
-    state.filtros.orden = "titulo_asc";
-    const ord = $("#filtro-orden");
-    if (ord) ord.value = "titulo_asc";
-  }
-  renderAll();
-}
-
 function renderStats() {
-  if (state.vista === "explorar") {
-    const totalCat = state.catalogo.length;
-    const disponibles = catalogoFueraDeLista().length;
-    const enLista = totalCat - disponibles;
-    $("#stats").innerHTML = `
-      <div class="stat"><strong>${disponibles}</strong> por descubrir</div>
-      <div class="stat"><strong>${enLista}</strong> ya en tu lista</div>
-      <div class="stat"><strong>${totalCat}</strong> en catálogo</div>
-    `;
-    return;
-  }
   const c = contadores();
   $("#stats").innerHTML = `
-    <div class="stat"><strong>${c.total}</strong> títulos</div>
+    <div class="stat"><strong>${c.total}</strong> títulos · <strong>${c.enLista}</strong> en tu lista</div>
     <div class="stat"><strong>${c.pendientes}</strong> pendientes</div>
     <div class="stat"><strong>${c.vistas}</strong> vistas</div>
+    <div class="stat"><strong>${c.sinMarcar}</strong> sin marcar</div>
     <div class="stat"><strong>${c.favoritas}</strong> favoritas</div>
   `;
 }
@@ -875,39 +855,33 @@ function renderFiltrosOpciones() {
 }
 
 function renderGrid() {
-  const explorar = state.vista === "explorar";
-  const list = explorar ? filtrarCatalogoExplorar() : filtrarYOrdenar();
+  const list = filtrarYOrdenar();
   const grid = $("#grid");
   if (!list.length) {
-    grid.innerHTML = explorar
-      ? `<div class="empty">No hay títulos del catálogo con estos filtros${
-          state.catalogo.length ? "" : " (el catálogo aún está vacío)"
-        }. Los que quites de tu lista volverán a aparecer aquí.</div>`
-      : `<div class="empty">No hay títulos con estos filtros. Prueba a limpiar la búsqueda o añade uno nuevo.</div>`;
+    grid.innerHTML = `<div class="empty">No hay títulos con estos filtros. Prueba a limpiar la búsqueda o añade uno nuevo.</div>`;
     return;
   }
   grid.innerHTML = list
     .map((t) => {
+      const sinMarcar = Boolean(t._sinMarcar);
       const metaBits = [
         t.tipo === "serie" ? "Serie" : "Película",
         t.anio || "¿?",
-        !explorar && t.tipo === "serie" && t.temporada != null
+        !sinMarcar && t.tipo === "serie" && t.temporada != null
           ? `Temp. ${t.temporada}`
           : null,
-        !explorar && t.puntuacion != null ? `★ ${t.puntuacion}/10` : null,
+        !sinMarcar && t.puntuacion != null ? `★ ${t.puntuacion}/10` : null,
       ]
         .filter(Boolean)
         .join(" · ");
 
-      const badgeEstado = explorar
-        ? `<span class="badge badge-tipo">Catálogo</span>`
-        : `<span class="badge badge-tipo">${escapeHtml(labelEstado(t.estado))}</span>`;
+      const badgeEstado = `<span class="badge badge-tipo${sinMarcar ? " badge-sin-marcar" : ""}">${escapeHtml(labelEstado(t.estado))}</span>`;
 
-      const favBtn = explorar
+      const favBtn = sinMarcar
         ? ""
         : `<button type="button" class="fav-btn ${t.favorita ? "on" : ""}" data-action="fav" title="Favorita" aria-label="Favorita" aria-pressed="${t.favorita}">★</button>`;
 
-      const actions = explorar
+      const actions = sinMarcar
         ? `<button class="btn btn-sm btn-primary" data-action="detalle">Ficha</button>
             <button class="btn btn-sm" data-action="add-pendiente">Pendiente</button>
             <button class="btn btn-sm" data-action="add-vista">Vista</button>`
@@ -917,7 +891,7 @@ function renderGrid() {
             <button class="btn btn-sm btn-danger" data-action="borrar">Borrar</button>`;
 
       return `
-      <article class="card" data-id="${escapeHtml(t.id)}" data-mode="${explorar ? "explorar" : "lista"}">
+      <article class="card" data-id="${escapeHtml(t.id)}" data-mode="${sinMarcar ? "sin-marcar" : "lista"}">
         <div class="poster">
           ${posterHtml(t)}
           <div class="badge-row">
@@ -1079,13 +1053,14 @@ function collectForm() {
 }
 
 function openDetalle(t) {
-  const explorar = Boolean(t._explorar) || (state.vista === "explorar" && !state.db.lista.some((x) => x.id === t.id));
+  const sinMarcar =
+    Boolean(t._sinMarcar) || !state.db.lista.some((x) => x.id === t.id);
   const grouped = agruparStreamingParaFicha(t.streaming_es || []);
-  const meta = explorar
+  const meta = sinMarcar
     ? [
         t.tipo === "serie" ? "Serie" : "Película",
         t.anio || "¿?",
-        "Catálogo",
+        "Sin marcar",
       ]
         .filter(Boolean)
         .join(" · ")
@@ -1115,7 +1090,7 @@ function openDetalle(t) {
       .join("")}</div>`;
   };
 
-  const actions = explorar
+  const actions = sinMarcar
     ? `<button class="btn btn-primary" data-det="add-pendiente" data-id="${escapeHtml(t.id)}">Pendiente</button>
           <button class="btn" data-det="add-vista" data-id="${escapeHtml(t.id)}">Vista</button>`
     : `<button class="btn btn-primary" data-det="editar" data-id="${escapeHtml(t.id)}">Editar</button>
@@ -1165,7 +1140,7 @@ function openDetalle(t) {
             : ""
         }
         ${
-          explorar
+          sinMarcar
             ? ""
             : `<div class="detail-section">
           <h4>Notas</h4>
@@ -1191,10 +1166,6 @@ function openDetalle(t) {
 }
 
 function bindEvents() {
-  $$(".tabs .tab").forEach((btn) => {
-    btn.addEventListener("click", () => setVista(btn.dataset.vista));
-  });
-
   $("#btn-añadir").addEventListener("click", () => openForm(null));
 
   $("#btn-exportar").addEventListener("click", () => {
@@ -1232,12 +1203,18 @@ function bindEvents() {
   });
 
   $("#btn-reseedar").addEventListener("click", async () => {
-    if (!confirm("¿Restablecer la lista con el catálogo semilla? Se sustituye lo guardado en este navegador.")) return;
+    if (
+      !confirm(
+        "¿Vaciar tu lista? Todos los títulos volverán a Sin marcar; no quedará ninguno pendiente ni vista."
+      )
+    )
+      return;
     const seed = await loadSeedArray();
-    aplicarSeed(seed);
-    // Explorar (catalogo.json) no se toca
+    const catalogExtra = await loadCatalogoArray();
+    aplicarCatalogoUnion(seed, catalogExtra);
+    aplicarEstadoFresco();
     renderAll();
-    toast("Catálogo semilla cargado");
+    toast("Lista vaciada");
   });
 
   $("#busqueda").addEventListener("input", (e) => {
@@ -1276,8 +1253,8 @@ function bindEvents() {
     const id = card?.dataset.id;
     if (!id) return;
     const action = btn.dataset.action;
-    const mode = card?.dataset.mode || state.vista;
-    const t = mode === "explorar" ? getMergedOrCatalog(id) : getMerged(id);
+    const mode = card?.dataset.mode || "lista";
+    const t = mode === "sin-marcar" ? getMergedOrCatalog(id) : getMerged(id);
     if (!t) return;
     if (action === "detalle") openDetalle(t);
     else if (action === "add-pendiente") {
@@ -1384,5 +1361,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     state.db = Storage.empty();
     state.catalogo = [];
   }
-  setVista(state.vista || "lista");
+  renderAll();
 });

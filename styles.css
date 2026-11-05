@@ -99,17 +99,9 @@ a {
   gap: 0.5rem;
 }
 
+/* tabs removed — unified home view */
 .tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-bottom: 1rem;
-  padding: 0.3rem;
-  background: var(--bg-elev);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  width: fit-content;
-  max-width: 100%;
+  display: none;
 }
 
 .tab {
@@ -134,13 +126,7 @@ a {
   border-color: rgba(108, 158, 255, 0.35);
 }
 
-body.vista-explorar .filtro-solo-lista {
-  display: none;
-}
 
-body.vista-explorar .orden-solo-lista {
-  display: none;
-}
 
 @media (max-width: 640px) {
   .tabs {
@@ -329,6 +315,12 @@ textarea:focus {
   background: rgba(94, 176, 255, 0.22);
   color: #9fd0ff;
   border-color: rgba(94, 176, 255, 0.4);
+}
+
+.badge-sin-marcar {
+  background: rgba(154, 163, 181, 0.18);
+  color: var(--muted);
+  border-color: rgba(154, 163, 181, 0.35);
 }
 
 .card-body {

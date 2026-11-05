@@ -1,3 +1,4 @@
+/* Copia embebida de data/catalogo.json — fallback si fetch falla (p.ej. file://) */
 window.CINE_CATALOGO = [
   {
     "id": "tmdb:157336",
