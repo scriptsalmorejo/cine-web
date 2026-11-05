@@ -302,6 +302,8 @@ const Storage = (() => {
 /* ---------- State ---------- */
 const state = {
   db: Storage.empty(),
+  catalogo: [], // fichas de data/catalogo.json (nunca auto-añadidas a la lista)
+  vista: "lista", // "lista" | "explorar"
   filtros: {
     q: "",
     estado: "todos",
@@ -334,25 +336,45 @@ function contadores() {
   return { total: state.db.lista.length, pendientes, vistas, favoritas };
 }
 
+function idsEnListaSet() {
+  return new Set(state.db.lista.map((r) => r.id));
+}
+
+/** Fichas del catálogo que aún no están en la lista del usuario. */
+function catalogoFueraDeLista() {
+  const enLista = idsEnListaSet();
+  return state.catalogo.filter((f) => f && f.id && !enLista.has(f.id));
+}
+
 function plataformasParaFiltro() {
   const extras = new Set();
-  state.db.lista.forEach((row) =>
-    (row.plataformas || []).forEach((p) => {
-      // Max Amazon Channel se cubre con el filtro Max; no como opción suelta
-      if (p.nombre === "Max Amazon Channel") return;
-      if (!PLATAFORMAS_ES.includes(p.nombre)) extras.add(p.nombre);
-    })
-  );
+  const addPlat = (nombre) => {
+    if (!nombre || nombre === "Max Amazon Channel") return;
+    if (!PLATAFORMAS_ES.includes(nombre)) extras.add(nombre);
+  };
+  if (state.vista === "explorar") {
+    catalogoFueraDeLista().forEach((f) => {
+      snapshotPlataformasDesdeStreaming(f.streaming_es).forEach((p) => addPlat(p.nombre));
+    });
+  } else {
+    state.db.lista.forEach((row) =>
+      (row.plataformas || []).forEach((p) => addPlat(p.nombre))
+    );
+  }
   const extraList = [...extras].sort((a, b) => a.localeCompare(b, "es"));
   return [...PLATAFORMAS_ES, ...extraList];
 }
 
 function generosDisponibles() {
   const set = new Set();
-  state.db.lista.forEach((row) => {
-    const f = state.db.fichas[row.id];
-    (f?.generos || []).forEach((g) => set.add(g));
-  });
+  if (state.vista === "explorar") {
+    catalogoFueraDeLista().forEach((f) => (f.generos || []).forEach((g) => set.add(g)));
+  } else {
+    state.db.lista.forEach((row) => {
+      const f = state.db.fichas[row.id];
+      (f?.generos || []).forEach((g) => set.add(g));
+    });
+  }
   return [...set].sort((a, b) => a.localeCompare(b, "es"));
 }
 
@@ -404,6 +426,52 @@ function filtrarYOrdenar() {
   return list;
 }
 
+function filtrarCatalogoExplorar() {
+  const f = state.filtros;
+  const q = f.q.trim().toLowerCase();
+  let list = catalogoFueraDeLista().map((ficha) => ({
+    ...ficha,
+    plataformas: snapshotPlataformasDesdeStreaming(ficha.streaming_es),
+    _explorar: true,
+  }));
+  list = list.filter((t) => {
+    if (f.tipo !== "todos" && t.tipo !== f.tipo) return false;
+    if (f.en_cines && !t.en_cines) return false;
+    if (f.plataforma !== "todas") {
+      const ok = (t.plataformas || []).some((p) =>
+        plataformaCoincideFiltro(p.nombre, f.plataforma)
+      );
+      if (!ok) return false;
+    }
+    if (f.genero !== "todos" && !(t.generos || []).includes(f.genero)) return false;
+    if (q) {
+      const blob = [
+        t.titulo,
+        t.titulo_original,
+        t.sinopsis,
+        (t.generos || []).join(" "),
+        (t.plataformas || []).map((p) => p.nombre).join(" "),
+      ]
+        .join(" ")
+        .toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  const cmp = {
+    anadido_desc: (a, b) => String(b.titulo || "").localeCompare(String(a.titulo || ""), "es"),
+    anadido_asc: (a, b) => String(a.titulo || "").localeCompare(String(b.titulo || ""), "es"),
+    titulo_asc: (a, b) => a.titulo.localeCompare(b.titulo, "es"),
+    titulo_desc: (a, b) => b.titulo.localeCompare(a.titulo, "es"),
+    anio_desc: (a, b) => (b.anio || 0) - (a.anio || 0),
+    anio_asc: (a, b) => (a.anio || 0) - (b.anio || 0),
+    puntuacion_desc: (a, b) => a.titulo.localeCompare(b.titulo, "es"),
+    puntuacion_asc: (a, b) => a.titulo.localeCompare(b.titulo, "es"),
+  };
+  list.sort(cmp[f.orden] || cmp.titulo_asc);
+  return list;
+}
+
 /* ---------- Seed ---------- */
 async function loadSeedArray() {
   try {
@@ -416,6 +484,29 @@ async function loadSeedArray() {
     if (Array.isArray(window.CINE_SEED)) return window.CINE_SEED;
     throw err;
   }
+}
+
+async function loadCatalogoArray() {
+  try {
+    const res = await fetch("data/catalogo.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error("catalogo no es array");
+    return data;
+  } catch (err) {
+    if (Array.isArray(window.CINE_CATALOGO)) return window.CINE_CATALOGO;
+    return [];
+  }
+}
+
+function aplicarCatalogo(rawArr) {
+  const byId = new Map();
+  for (const raw of rawArr || []) {
+    const ficha = Storage.fichaFromSeed(raw);
+    if (!ficha.id) continue;
+    byId.set(ficha.id, ficha);
+  }
+  state.catalogo = [...byId.values()];
 }
 
 function aplicarSeed(seedArr) {
@@ -468,10 +559,11 @@ async function ensureData() {
     state.db = loaded;
     mergeSeedIntoDb(seed);
     persist();
-    state.seedReady = true;
-    return;
+  } else {
+    aplicarSeed(seed);
   }
-  aplicarSeed(seed);
+  // Catálogo de Explorar: nunca se auto-añade a la lista
+  aplicarCatalogo(await loadCatalogoArray());
   state.seedReady = true;
 }
 
@@ -563,6 +655,67 @@ function addFichaToLista(id) {
   return true;
 }
 
+/**
+ * Añade una ficha de Explorar a la lista con el estado elegido.
+ * No toca otras entradas. favorita/puntuacion/notas vacíos; temporada según ficha.
+ */
+function addFromExplorar(id, estado) {
+  if (state.db.lista.some((x) => x.id === id)) {
+    toast("Ya estaba en tu lista");
+    return false;
+  }
+  const ficha =
+    state.catalogo.find((f) => f.id === id) ||
+    state.db.fichas[id] ||
+    null;
+  if (!ficha) return false;
+
+  state.db.fichas[id] = { ...(state.db.fichas[id] || {}), ...ficha };
+
+  const now = new Date().toISOString();
+  const esVista = estado === "vista";
+  const isMob =
+    ficha.id === "tmdb:247718" ||
+    (ficha.temporada_interes != null && Number(ficha.temporada_interes) > 0);
+  const row = Storage.normalizeListaItem({
+    id: ficha.id,
+    estado: esVista ? "vista" : "pendiente",
+    favorita: false,
+    puntuacion: null,
+    notas: "",
+    anadido_en: now,
+    visto_en: esVista ? now : null,
+    plataformas: snapshotPlataformasDesdeStreaming(ficha.streaming_es),
+    temporada: isMob ? Number(ficha.temporada_interes) || 2 : null,
+  });
+  state.db.lista.unshift(row);
+  persist();
+  toast(esVista ? "Añadida como vista" : "Añadida a pendientes");
+  return true;
+}
+
+function getFichaExplorar(id) {
+  return state.catalogo.find((f) => f.id === id) || null;
+}
+
+function getMergedOrCatalog(id) {
+  const merged = getMerged(id);
+  if (merged) return merged;
+  const ficha = getFichaExplorar(id);
+  if (!ficha) return null;
+  return {
+    ...ficha,
+    plataformas: snapshotPlataformasDesdeStreaming(ficha.streaming_es),
+    _explorar: true,
+    estado: null,
+    favorita: false,
+    puntuacion: null,
+    notas: "",
+    anadido_en: null,
+    visto_en: null,
+  };
+}
+
 function borrarDeLista(id) {
   state.db.lista = state.db.lista.filter((t) => t.id !== id);
   persist();
@@ -648,7 +801,47 @@ function plataformasHtml(plataformas) {
     .join("");
 }
 
+function setVista(vista) {
+  state.vista = vista === "explorar" ? "explorar" : "lista";
+  document.body.classList.toggle("vista-explorar", state.vista === "explorar");
+  $$(".tabs .tab").forEach((btn) => {
+    const active = btn.dataset.vista === state.vista;
+    btn.classList.toggle("is-active", active);
+    btn.setAttribute("aria-selected", active ? "true" : "false");
+  });
+  const busqueda = $("#busqueda");
+  if (busqueda) {
+    busqueda.placeholder =
+      state.vista === "explorar"
+        ? "Buscar en el catálogo…"
+        : "Buscar título, género, notas…";
+  }
+  // Si el orden actual es solo-lista y estamos en explorar, caer a título
+  if (
+    state.vista === "explorar" &&
+    ["anadido_desc", "anadido_asc", "puntuacion_desc", "puntuacion_asc"].includes(
+      state.filtros.orden
+    )
+  ) {
+    state.filtros.orden = "titulo_asc";
+    const ord = $("#filtro-orden");
+    if (ord) ord.value = "titulo_asc";
+  }
+  renderAll();
+}
+
 function renderStats() {
+  if (state.vista === "explorar") {
+    const totalCat = state.catalogo.length;
+    const disponibles = catalogoFueraDeLista().length;
+    const enLista = totalCat - disponibles;
+    $("#stats").innerHTML = `
+      <div class="stat"><strong>${disponibles}</strong> por descubrir</div>
+      <div class="stat"><strong>${enLista}</strong> ya en tu lista</div>
+      <div class="stat"><strong>${totalCat}</strong> en catálogo</div>
+    `;
+    return;
+  }
   const c = contadores();
   $("#stats").innerHTML = `
     <div class="stat"><strong>${c.total}</strong> títulos</div>
@@ -682,10 +875,15 @@ function renderFiltrosOpciones() {
 }
 
 function renderGrid() {
-  const list = filtrarYOrdenar();
+  const explorar = state.vista === "explorar";
+  const list = explorar ? filtrarCatalogoExplorar() : filtrarYOrdenar();
   const grid = $("#grid");
   if (!list.length) {
-    grid.innerHTML = `<div class="empty">No hay títulos con estos filtros. Prueba a limpiar la búsqueda o añade uno nuevo.</div>`;
+    grid.innerHTML = explorar
+      ? `<div class="empty">No hay títulos del catálogo con estos filtros${
+          state.catalogo.length ? "" : " (el catálogo aún está vacío)"
+        }. Los que quites de tu lista volverán a aparecer aquí.</div>`
+      : `<div class="empty">No hay títulos con estos filtros. Prueba a limpiar la búsqueda o añade uno nuevo.</div>`;
     return;
   }
   grid.innerHTML = list
@@ -693,21 +891,40 @@ function renderGrid() {
       const metaBits = [
         t.tipo === "serie" ? "Serie" : "Película",
         t.anio || "¿?",
-        t.tipo === "serie" && t.temporada != null ? `Temp. ${t.temporada}` : null,
-        t.puntuacion != null ? `★ ${t.puntuacion}/10` : null,
+        !explorar && t.tipo === "serie" && t.temporada != null
+          ? `Temp. ${t.temporada}`
+          : null,
+        !explorar && t.puntuacion != null ? `★ ${t.puntuacion}/10` : null,
       ]
         .filter(Boolean)
         .join(" · ");
 
+      const badgeEstado = explorar
+        ? `<span class="badge badge-tipo">Catálogo</span>`
+        : `<span class="badge badge-tipo">${escapeHtml(labelEstado(t.estado))}</span>`;
+
+      const favBtn = explorar
+        ? ""
+        : `<button type="button" class="fav-btn ${t.favorita ? "on" : ""}" data-action="fav" title="Favorita" aria-label="Favorita" aria-pressed="${t.favorita}">★</button>`;
+
+      const actions = explorar
+        ? `<button class="btn btn-sm btn-primary" data-action="detalle">Ficha</button>
+            <button class="btn btn-sm" data-action="add-pendiente">Pendiente</button>
+            <button class="btn btn-sm" data-action="add-vista">Vista</button>`
+        : `<button class="btn btn-sm btn-primary" data-action="detalle">Ficha</button>
+            <button class="btn btn-sm" data-action="toggle-estado">${t.estado === "vista" ? "→ Pendiente" : "→ Vista"}</button>
+            <button class="btn btn-sm" data-action="editar">Editar</button>
+            <button class="btn btn-sm btn-danger" data-action="borrar">Borrar</button>`;
+
       return `
-      <article class="card" data-id="${escapeHtml(t.id)}">
+      <article class="card" data-id="${escapeHtml(t.id)}" data-mode="${explorar ? "explorar" : "lista"}">
         <div class="poster">
           ${posterHtml(t)}
           <div class="badge-row">
-            <span class="badge badge-tipo">${escapeHtml(labelEstado(t.estado))}</span>
+            ${badgeEstado}
             ${t.en_cines ? `<span class="badge badge-en-cines">En cines${t.estreno_es ? ` · ${escapeHtml(formatFechaDia(t.estreno_es) || t.estreno_es)}` : ""}</span>` : ""}
           </div>
-          <button type="button" class="fav-btn ${t.favorita ? "on" : ""}" data-action="fav" title="Favorita" aria-label="Favorita" aria-pressed="${t.favorita}">★</button>
+          ${favBtn}
         </div>
         <div class="card-body">
           <h3 class="card-title">${escapeHtml(t.titulo)}</h3>
@@ -715,10 +932,7 @@ function renderGrid() {
           <div class="chips">${(t.generos || []).slice(0, 3).map((g) => `<span class="chip">${escapeHtml(g)}</span>`).join("")}</div>
           <div class="chips">${plataformasHtml(t.plataformas)}</div>
           <div class="card-actions">
-            <button class="btn btn-sm btn-primary" data-action="detalle">Ficha</button>
-            <button class="btn btn-sm" data-action="toggle-estado">${t.estado === "vista" ? "→ Pendiente" : "→ Vista"}</button>
-            <button class="btn btn-sm" data-action="editar">Editar</button>
-            <button class="btn btn-sm btn-danger" data-action="borrar">Borrar</button>
+            ${actions}
           </div>
         </div>
       </article>`;
@@ -865,17 +1079,26 @@ function collectForm() {
 }
 
 function openDetalle(t) {
+  const explorar = Boolean(t._explorar) || (state.vista === "explorar" && !state.db.lista.some((x) => x.id === t.id));
   const grouped = agruparStreamingParaFicha(t.streaming_es || []);
-  const meta = [
-    t.tipo === "serie" ? "Serie" : "Película",
-    t.anio || "¿?",
-    t.temporada != null ? `Temporada ${t.temporada}` : null,
-    labelEstado(t.estado),
-    t.puntuacion != null ? `Puntuación ${t.puntuacion}/10` : "Sin puntuación",
-    t.favorita ? "Favorita" : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  const meta = explorar
+    ? [
+        t.tipo === "serie" ? "Serie" : "Película",
+        t.anio || "¿?",
+        "Catálogo",
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : [
+        t.tipo === "serie" ? "Serie" : "Película",
+        t.anio || "¿?",
+        t.temporada != null ? `Temporada ${t.temporada}` : null,
+        labelEstado(t.estado),
+        t.puntuacion != null ? `Puntuación ${t.puntuacion}/10` : "Sin puntuación",
+        t.favorita ? "Favorita" : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
 
   const renderGroup = (items) => {
     if (!items.length) return `<p class="meta" style="margin:0">—</p>`;
@@ -891,6 +1114,14 @@ function openDetalle(t) {
       })
       .join("")}</div>`;
   };
+
+  const actions = explorar
+    ? `<button class="btn btn-primary" data-det="add-pendiente" data-id="${escapeHtml(t.id)}">Pendiente</button>
+          <button class="btn" data-det="add-vista" data-id="${escapeHtml(t.id)}">Vista</button>`
+    : `<button class="btn btn-primary" data-det="editar" data-id="${escapeHtml(t.id)}">Editar</button>
+          <button class="btn" data-det="fav" data-id="${escapeHtml(t.id)}">${t.favorita ? "Quitar favorita" : "Marcar favorita"}</button>
+          <button class="btn" data-det="toggle" data-id="${escapeHtml(t.id)}">${t.estado === "vista" ? "Marcar pendiente" : "Marcar vista"}</button>
+          <button class="btn btn-danger" data-det="borrar" data-id="${escapeHtml(t.id)}">Borrar</button>`;
 
   $("#modal-detalle .content").innerHTML = `
     <div class="detail">
@@ -933,24 +1164,25 @@ function openDetalle(t) {
             ? `<div class="detail-section"><h4>Nota de catálogo</h4><p style="margin:0">${escapeHtml(t.nota)}</p></div>`
             : ""
         }
-        <div class="detail-section">
+        ${
+          explorar
+            ? ""
+            : `<div class="detail-section">
           <h4>Notas</h4>
           <p style="margin:0; white-space:pre-wrap">${escapeHtml(t.notas || "—")}</p>
         </div>
         <div class="detail-section">
           <h4>Fechas</h4>
           <p style="margin:0" class="meta">Añadido: ${escapeHtml(formatFecha(t.anadido_en))} · Visto: ${escapeHtml(formatFecha(t.visto_en))}${t.verificado_en ? ` · Catálogo: ${escapeHtml(formatFecha(t.verificado_en))}` : ""}</p>
-        </div>
+        </div>`
+        }
         ${
           t.trailer
             ? `<div class="detail-section"><h4>Trailer</h4><p style="margin:0"><a href="${escapeHtml(t.trailer)}" target="_blank" rel="noopener noreferrer">Ver trailer</a></p></div>`
             : ""
         }
         <div class="card-actions" style="margin-top:1rem">
-          <button class="btn btn-primary" data-det="editar" data-id="${escapeHtml(t.id)}">Editar</button>
-          <button class="btn" data-det="fav" data-id="${escapeHtml(t.id)}">${t.favorita ? "Quitar favorita" : "Marcar favorita"}</button>
-          <button class="btn" data-det="toggle" data-id="${escapeHtml(t.id)}">${t.estado === "vista" ? "Marcar pendiente" : "Marcar vista"}</button>
-          <button class="btn btn-danger" data-det="borrar" data-id="${escapeHtml(t.id)}">Borrar</button>
+          ${actions}
         </div>
       </div>
     </div>
@@ -959,6 +1191,10 @@ function openDetalle(t) {
 }
 
 function bindEvents() {
+  $$(".tabs .tab").forEach((btn) => {
+    btn.addEventListener("click", () => setVista(btn.dataset.vista));
+  });
+
   $("#btn-añadir").addEventListener("click", () => openForm(null));
 
   $("#btn-exportar").addEventListener("click", () => {
@@ -999,6 +1235,7 @@ function bindEvents() {
     if (!confirm("¿Restablecer la lista con el catálogo semilla? Se sustituye lo guardado en este navegador.")) return;
     const seed = await loadSeedArray();
     aplicarSeed(seed);
+    // Explorar (catalogo.json) no se toca
     renderAll();
     toast("Catálogo semilla cargado");
   });
@@ -1037,11 +1274,17 @@ function bindEvents() {
     if (!btn) return;
     const card = btn.closest("[data-id]");
     const id = card?.dataset.id;
-    const t = getMerged(id);
-    if (!t) return;
+    if (!id) return;
     const action = btn.dataset.action;
+    const mode = card?.dataset.mode || state.vista;
+    const t = mode === "explorar" ? getMergedOrCatalog(id) : getMerged(id);
+    if (!t) return;
     if (action === "detalle") openDetalle(t);
-    else if (action === "editar") openForm(t);
+    else if (action === "add-pendiente") {
+      if (addFromExplorar(id, "pendiente")) renderAll();
+    } else if (action === "add-vista") {
+      if (addFromExplorar(id, "vista")) renderAll();
+    } else if (action === "editar") openForm(t);
     else if (action === "fav") {
       toggleFavorita(id);
       renderAll();
@@ -1062,7 +1305,17 @@ function bindEvents() {
     if (!btn) return;
     const id = btn.dataset.id;
     const act = btn.dataset.det;
-    if (act === "editar") {
+    if (act === "add-pendiente") {
+      if (addFromExplorar(id, "pendiente")) {
+        closeModal("#modal-detalle");
+        renderAll();
+      }
+    } else if (act === "add-vista") {
+      if (addFromExplorar(id, "vista")) {
+        closeModal("#modal-detalle");
+        renderAll();
+      }
+    } else if (act === "editar") {
       closeModal("#modal-detalle");
       openForm(getMerged(id));
     } else if (act === "fav") {
@@ -1129,6 +1382,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error(err);
     toast("No se pudo cargar el catálogo semilla");
     state.db = Storage.empty();
+    state.catalogo = [];
   }
-  renderAll();
+  setVista(state.vista || "lista");
 });

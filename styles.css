@@ -99,6 +99,59 @@ a {
   gap: 0.5rem;
 }
 
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  padding: 0.3rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.tab {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 9px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  color: var(--text);
+  background: var(--bg-elev-2);
+}
+
+.tab.is-active {
+  color: var(--text);
+  background: var(--accent-soft);
+  border-color: rgba(108, 158, 255, 0.35);
+}
+
+body.vista-explorar .filtro-solo-lista {
+  display: none;
+}
+
+body.vista-explorar .orden-solo-lista {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .tabs {
+    width: 100%;
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+  }
+}
+
 .btn {
   border: 1px solid var(--border);
   background: var(--bg-elev);
