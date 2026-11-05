@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Lista personal de películas y series en España, con catálogo verificado (TMDB + JustWatch)." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <title>Cine Web — Películas y series</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">CW</div>
+        <div>
+          <h1>Cine Web</h1>
+          <p>Tu lista · catálogo ES (TMDB + JustWatch) · datos en este navegador</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="btn btn-primary" id="btn-añadir">+ Añadir</button>
+        <button type="button" class="btn" id="btn-exportar">Exportar JSON</button>
+        <button type="button" class="btn" id="btn-importar">Importar JSON</button>
+        <input type="file" id="file-import" accept="application/json,.json" class="sr-only" />
+        <button type="button" class="btn" id="btn-reseedar" title="Sustituye la lista por el seed">Restablecer seed</button>
+      </div>
+    </header>
+
+    <div class="stats" id="stats" aria-live="polite"></div>
+
+    <div class="toolbar" role="search">
+      <label class="sr-only" for="busqueda">Buscar</label>
+      <input class="search" id="busqueda" type="search" placeholder="Buscar título, género, notas…" autocomplete="off" />
+
+      <label class="sr-only" for="filtro-estado">Estado</label>
+      <select class="select" id="filtro-estado">
+        <option value="todos">Todos los estados</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="vista">Vista</option>
+      </select>
+
+      <label class="sr-only" for="filtro-tipo">Tipo</label>
+      <select class="select" id="filtro-tipo">
+        <option value="todos">Películas y series</option>
+        <option value="pelicula">Películas</option>
+        <option value="serie">Series</option>
+      </select>
+
+      <label class="sr-only" for="filtro-plataforma">Plataforma</label>
+      <select class="select" id="filtro-plataforma">
+        <option value="todas">Todas las plataformas</option>
+      </select>
+
+      <label class="sr-only" for="filtro-genero">Género</label>
+      <select class="select" id="filtro-genero">
+        <option value="todos">Todos los géneros</option>
+      </select>
+
+      <label class="check-inline" for="filtro-favoritas">
+        <input type="checkbox" id="filtro-favoritas" />
+        Solo favoritas
+      </label>
+
+      <label class="sr-only" for="filtro-orden">Orden</label>
+      <select class="select" id="filtro-orden">
+        <option value="anadido_desc">Más recientes primero</option>
+        <option value="anadido_asc">Más antiguos primero</option>
+        <option value="titulo_asc">Título A→Z</option>
+        <option value="titulo_desc">Título Z→A</option>
+        <option value="anio_desc">Año ↓</option>
+        <option value="anio_asc">Año ↑</option>
+        <option value="puntuacion_desc">Puntuación ↓</option>
+        <option value="puntuacion_asc">Puntuación ↑</option>
+      </select>
+    </div>
+
+    <main class="grid" id="grid" aria-live="polite"></main>
+  </div>
+
+  <div class="modal-backdrop" id="modal-form" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-form-title">
+    <div class="modal">
+      <header>
+        <h2 id="modal-form-title">Añadir título</h2>
+        <button type="button" class="btn btn-ghost btn-sm" data-close="#modal-form" aria-label="Cerrar">✕</button>
+      </header>
+      <form id="form-titulo">
+        <div class="content form-grid">
+          <label class="full">Título *
+            <input class="field" id="f-titulo" required maxlength="200" />
+          </label>
+          <label class="full">Id (opcional, p.ej. tmdb:123)
+            <input class="field" id="f-id" maxlength="80" placeholder="Se genera solo si lo dejas vacío" />
+          </label>
+          <label>Tipo
+            <select class="select" id="f-tipo">
+              <option value="pelicula">Película</option>
+              <option value="serie">Serie</option>
+            </select>
+          </label>
+          <label>Año
+            <input class="field" id="f-anio" type="number" min="1888" max="2100" />
+          </label>
+          <label class="full">Géneros (separados por coma)
+            <input class="field" id="f-generos" placeholder="Drama, Ciencia ficción" />
+          </label>
+          <label class="full">Sinopsis
+            <textarea id="f-sinopsis"></textarea>
+          </label>
+          <label id="wrap-duracion">Duración (min)
+            <input class="field" id="f-duracion" type="number" min="1" />
+          </label>
+          <label id="wrap-temporadas" hidden>Temporadas (totales)
+            <input class="field" id="f-temporadas" type="number" min="1" />
+          </label>
+          <label id="wrap-temporada" hidden>Temporada de interés
+            <input class="field" id="f-temporada" type="number" min="1" />
+          </label>
+          <label class="full">URL del póster (opcional)
+            <input class="field" id="f-poster" type="url" placeholder="https://…" />
+          </label>
+          <label>Estado
+            <select class="select" id="f-estado">
+              <option value="pendiente">Pendiente</option>
+              <option value="vista">Vista</option>
+            </select>
+          </label>
+          <label>Puntuación (1–10)
+            <input class="field" id="f-puntuacion" type="number" min="1" max="10" step="1" placeholder="Opcional" />
+          </label>
+          <label class="full check-row" style="flex-direction:row; margin-top:0.35rem">
+            <input type="checkbox" id="f-favorita" />
+            <span>Favorita</span>
+          </label>
+          <label class="full">Notas
+            <textarea id="f-notas"></textarea>
+          </label>
+          <div class="full">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem">
+              <span style="color:var(--muted);font-size:0.85rem">Plataformas (suscripción)</span>
+              <button type="button" class="btn btn-sm" id="btn-add-plat">+ Plataforma</button>
+            </div>
+            <div class="platform-editor" id="platform-editor"></div>
+            <p class="meta" style="margin:0.45rem 0 0">Lista ES: Netflix, Max, Apple TV+, Prime Video, Disney+, Movistar Plus+, Filmin, SkyShowtime u «Otra».</p>
+          </div>
+        </div>
+        <footer>
+          <button type="button" class="btn" data-close="#modal-form">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </footer>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-detalle" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Ficha del título">
+    <div class="modal modal-lg">
+      <header>
+        <h2>Ficha</h2>
+        <button type="button" class="btn btn-ghost btn-sm" data-close="#modal-detalle" aria-label="Cerrar">✕</button>
+      </header>
+      <div class="content"></div>
+    </div>
+  </div>
+
+  <script src="seed.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
