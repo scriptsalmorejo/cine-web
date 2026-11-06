@@ -22,6 +22,7 @@ create table if not exists public.user_titles (
   anadido_en timestamptz,
   visto_en timestamptz,
   temporada integer,
+  episodio integer,
   plataformas jsonb not null default '[]'::jsonb,
   actualizado_en timestamptz not null default now(),
   borrado boolean not null default false,
@@ -47,6 +48,10 @@ comment on column public.user_titles.borrado is
   'Tombstone cuando el título vuelve a Sin marcar. No existe el estado sin_marcar.';
 comment on column public.user_titles.estado is
   'Solo pendiente o vista. Sin marcar = ausencia de fila viva.';
+comment on column public.user_titles.temporada is
+  'Temporada en curso (progreso de serie). Null = sin progreso.';
+comment on column public.user_titles.episodio is
+  'Último episodio visto (0 = empezar temporada). Null = sin progreso.';
 
 -- ---------------------------------------------------------------------------
 -- Plataformas contratadas (perfil)

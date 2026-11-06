@@ -32,3 +32,11 @@ La capa `Storage` en `app.js` aísla la persistencia para poder cambiar a un bac
 ## Despliegue
 
 Hosting estático: GitHub Pages, Netlify, Cloudflare Pages, Vercel o `npx surge ./cine-web`. Sin build. Cada visitante tiene su propio `localStorage`; comparte la lista con export/import JSON.
+
+## Fase 3 (local, v=20261109a)
+
+- **Seguimiento de series:** `temporada` + `episodio` en la lista, panel en la ficha, «Continuar viendo».
+- **Qué veo hoy:** sugerencias transparentes según tiempo, tipo, ánimo y tu lista.
+
+`episodio` viaja en `backend/merge.js` / `sync.js` y está en `backend/schema.sql`. La base en vivo necesita la columna antes de desplegar el sync de ese campo (ver informe).
+

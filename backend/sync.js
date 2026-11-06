@@ -129,7 +129,7 @@ async function usuarioActivo() {
 async function fetchTitles() {
   const { data, error } = await client
     .from("user_titles")
-    .select("id, estado, favorita, puntuacion, notas, anadido_en, visto_en, temporada, plataformas, actualizado_en, borrado");
+    .select("id, estado, favorita, puntuacion, notas, anadido_en, visto_en, temporada, episodio, plataformas, actualizado_en, borrado");
   if (error) throw error;
   return data || [];
 }

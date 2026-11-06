@@ -117,8 +117,15 @@ function cleanPuntuacion(value) {
 
 function cleanTemporada(value) {
   if (value == null || value === "") return null;
-  const n = Number(value);
-  if (!Number.isInteger(n)) return null;
+  const n = Math.trunc(Number(value));
+  if (!Number.isFinite(n) || n < 0) return null;
+  return n;
+}
+
+function cleanEpisodio(value) {
+  if (value == null || value === "") return null;
+  const n = Math.trunc(Number(value));
+  if (!Number.isFinite(n) || n < 0) return null;
   return n;
 }
 
@@ -140,6 +147,7 @@ export function filaViva(item, fallbackStamp) {
     anadido_en: item.anadido_en || null,
     visto_en: item.visto_en || null,
     temporada: cleanTemporada(item.temporada),
+    episodio: cleanEpisodio(item.episodio),
     plataformas: Array.isArray(item.plataformas) ? item.plataformas : [],
     actualizado_en: actualizado,
     borrado: false,
@@ -156,6 +164,7 @@ function filaTombstone(prev, id, actualizado_en) {
     anadido_en: prev?.anadido_en || null,
     visto_en: prev?.visto_en || null,
     temporada: cleanTemporada(prev?.temporada),
+    episodio: cleanEpisodio(prev?.episodio),
     plataformas: Array.isArray(prev?.plataformas) ? prev.plataformas : [],
     actualizado_en,
   };
@@ -188,6 +197,7 @@ export function mismoContenido(a, b) {
     (a.anadido_en || null) === (b.anadido_en || null) &&
     (a.visto_en || null) === (b.visto_en || null) &&
     cleanTemporada(a.temporada) === cleanTemporada(b.temporada) &&
+    cleanEpisodio(a.episodio) === cleanEpisodio(b.episodio) &&
     sameJson(a.plataformas || [], b.plataformas || []) &&
     Boolean(a.borrado) === Boolean(b.borrado)
   );
@@ -262,6 +272,7 @@ function tituloParaSubir(row) {
     anadido_en: row.anadido_en || null,
     visto_en: row.visto_en || null,
     temporada: cleanTemporada(row.temporada),
+    episodio: cleanEpisodio(row.episodio),
     plataformas: Array.isArray(row.plataformas) ? row.plataformas : [],
     actualizado_en: row.actualizado_en,
     borrado: Boolean(row.borrado),
@@ -280,6 +291,7 @@ export function toListaItem(row) {
     visto_en: row.visto_en || null,
     plataformas: Array.isArray(row.plataformas) ? row.plataformas : [],
     temporada: cleanTemporada(row.temporada),
+    episodio: cleanEpisodio(row.episodio),
     actualizado_en: row.actualizado_en || null,
   };
   return item;

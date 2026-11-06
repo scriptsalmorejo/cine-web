@@ -254,10 +254,16 @@ const Storage = (() => {
       actualizado_en: Number.isFinite(updated) ? new Date(updated).toISOString() : new Date().toISOString(),
       visto_en: raw.visto_en || raw.fechaVista || null,
       plataformas,
-      temporada:
-        raw.temporada != null && raw.temporada !== ""
-          ? Number(raw.temporada)
-          : null,
+      temporada: (() => {
+        if (raw.temporada == null || raw.temporada === "") return null;
+        const n = Math.trunc(Number(raw.temporada));
+        return Number.isFinite(n) && n >= 0 ? n : null;
+      })(),
+      episodio: (() => {
+        if (raw.episodio == null || raw.episodio === "") return null;
+        const n = Math.trunc(Number(raw.episodio));
+        return Number.isFinite(n) && n >= 0 ? n : null;
+      })(),
     };
   }
 
@@ -339,6 +345,7 @@ const state = {
     favoritas: false,
     en_cines: false,
     mis_plataformas: false,
+    continuar: false,
     orden: "recientes",
   },
   editId: null,
@@ -543,6 +550,324 @@ function compararRecientes(a, b) {
     || String(b.estreno_es || "").localeCompare(String(a.estreno_es || ""))
     || a.titulo.localeCompare(b.titulo, "es");
 }
+
+/* ---------- Seguimiento de series ---------- */
+function cleanProgressInt(value, { allowZero = false } = {}) {
+  if (value == null || value === "") return null;
+  const n = Math.trunc(Number(value));
+  if (!Number.isFinite(n) || n < 0) return null;
+  if (!allowZero && n < 1) return null;
+  return n;
+}
+
+function tieneProgreso(row) {
+  if (!row) return false;
+  return row.temporada != null || row.episodio != null;
+}
+
+function formatProgreso(row) {
+  if (!tieneProgreso(row)) return "";
+  const t = row.temporada != null ? `T${row.temporada}` : "T?";
+  const e = row.episodio != null ? `E${row.episodio}` : "E?";
+  return `Vas por ${t} · ${e}`;
+}
+
+function temporadasConocidas(fichaOrMerged) {
+  const t = fichaOrMerged || {};
+  const n = Number(t.duracion?.temporadas ?? t.temporadas);
+  return Number.isInteger(n) && n > 0 ? n : null;
+}
+
+function seriesEnCurso() {
+  return state.db.lista
+    .map((row) => getMerged(row.id))
+    .filter((t) => t && t.tipo === "serie" && t.estado !== "vista" && tieneProgreso(t))
+    .sort((a, b) => Date.parse(b.actualizado_en || 0) - Date.parse(a.actualizado_en || 0));
+}
+
+/** Asegura fila en lista (pendiente) y escribe progreso. No inventa episodios por temporada. */
+function asegurarProgreso(id, patch) {
+  let row = state.db.lista.find((x) => x.id === id);
+  const ficha =
+    state.db.fichas[id] ||
+    state.catalogo.find((f) => f.id === id) ||
+    null;
+  if (!ficha || ficha.tipo !== "serie") {
+    toast("El progreso solo aplica a series");
+    return null;
+  }
+  if (!row) {
+    state.db.fichas[id] = { ...(state.db.fichas[id] || {}), ...ficha };
+    const now = new Date().toISOString();
+    row = Storage.normalizeListaItem({
+      id,
+      estado: "pendiente",
+      favorita: false,
+      puntuacion: null,
+      notas: "",
+      anadido_en: now,
+      visto_en: null,
+      plataformas: snapshotPlataformasDesdeStreaming(ficha.streaming_es),
+      temporada: null,
+      episodio: null,
+    });
+    state.db.lista.unshift(row);
+    toast("Añadida a pendientes para seguir viendo");
+  }
+  const nextT = patch.temporada !== undefined
+    ? cleanProgressInt(patch.temporada, { allowZero: true })
+    : row.temporada;
+  const nextE = patch.episodio !== undefined
+    ? cleanProgressInt(patch.episodio, { allowZero: true })
+    : row.episodio;
+  row.temporada = nextT;
+  row.episodio = nextE;
+  row.actualizado_en = actualizadoAhora(row);
+  persist();
+  syncPush({ op: "upsert", item: { ...row }, ficha: fichaParaSync(id) });
+  return row;
+}
+
+function siguienteEpisodio(id) {
+  const row = state.db.lista.find((x) => x.id === id);
+  const baseT = row?.temporada != null ? row.temporada : 1;
+  const baseE = row?.episodio != null ? row.episodio : 0;
+  return asegurarProgreso(id, { temporada: baseT, episodio: baseE + 1 });
+}
+
+function empezarTemporadaSiguiente(id) {
+  const merged = getMergedOrCatalog(id);
+  const row = state.db.lista.find((x) => x.id === id);
+  const total = temporadasConocidas(merged);
+  const current = row?.temporada != null ? row.temporada : cleanProgressInt(merged?.temporada);
+  if (total != null && current != null && current >= total) {
+    toast(`Ya estás en la última temporada conocida (${total})`);
+    return null;
+  }
+  if (total != null && current != null && current < total) {
+    return asegurarProgreso(id, { temporada: current + 1, episodio: 0 });
+  }
+  // Sin total conocido: no inventamos; pedimos edición manual
+  toast("No sé cuántas temporadas tiene. Edita T y E a mano.");
+  return null;
+}
+
+function progresoPanelHtml(t, sinMarcar) {
+  if (t.tipo !== "serie") return "";
+  const tVal = !sinMarcar && t.temporada != null ? t.temporada : "";
+  const eVal = !sinMarcar && t.episodio != null ? t.episodio : "";
+  const total = temporadasConocidas(t);
+  const canNextSeason = total != null && t.temporada != null && t.temporada < total;
+  return `<div class="detail-section progress-panel" data-progress-id="${escapeHtml(t.id)}">
+    <h4>Seguimiento</h4>
+    <p class="meta" style="margin:0 0 10px">${tieneProgreso(t) && !sinMarcar ? escapeHtml(formatProgreso(t)) : "Aún no has marcado por dónde vas."}${total ? ` · ${total} temporadas en catálogo` : " · Temporadas totales desconocidas"}</p>
+    <div class="progress-edit">
+      <label>Temporada <input class="field progress-input" type="number" min="0" inputmode="numeric" data-prog="temporada" value="${tVal}" aria-label="Temporada en curso" /></label>
+      <label>Último episodio <input class="field progress-input" type="number" min="0" inputmode="numeric" data-prog="episodio" value="${eVal}" aria-label="Último episodio visto" /></label>
+      <button type="button" class="btn btn-primary btn-sm" data-det="prog-guardar" data-id="${escapeHtml(t.id)}">Guardar progreso</button>
+    </div>
+    <div class="card-actions progress-actions" style="margin-top:10px">
+      <button type="button" class="btn" data-det="prog-siguiente" data-id="${escapeHtml(t.id)}">Siguiente episodio</button>
+      <button type="button" class="btn" data-det="prog-temp-sig" data-id="${escapeHtml(t.id)}" ${canNextSeason ? "" : "disabled"} title="${canNextSeason ? "Pasa a la siguiente temporada (episodio 0)" : "Solo si el catálogo indica más temporadas"}">Empezar temporada siguiente</button>
+    </div>
+    <p class="meta" style="margin:8px 0 0">No inventamos episodios por temporada. Si falta el total, edita a mano.</p>
+  </div>`;
+}
+
+/* ---------- Qué veo hoy ---------- */
+const ANIMO_A_GENEROS = {
+  cualquiera: [],
+  drama: ["Drama"],
+  comedia: ["Comedia"],
+  accion: ["Acción", "Action & Adventure", "Aventura", "Thriller"],
+  terror: ["Terror", "Suspense", "Misterio", "Horror"],
+  scifi: ["Ciencia ficción", "Sci-Fi & Fantasy", "Fantasía"],
+  romantico: ["Romance"],
+  documental: ["Documental"],
+};
+
+const TIEMPO_PRESETS = {
+  corto: { id: "corto", label: "<45 min", max: 45, min: 0 },
+  medio: { id: "medio", label: "~1 h 30", max: 120, min: 70 },
+  largo: { id: "largo", label: "2 h+", max: Infinity, min: 120 },
+  libre: { id: "libre", label: "Sin límite", max: Infinity, min: 0 },
+};
+
+function minutosDeTitulo(t) {
+  const d = t?.duracion;
+  if (t?.tipo === "serie") {
+    const ep = Number(d?.minutos_episodio);
+    return Number.isFinite(ep) && ep > 0 ? ep : null;
+  }
+  const mins = typeof d === "object" && d ? Number(d.minutos) : Number(d);
+  return Number.isFinite(mins) && mins > 0 ? mins : null;
+}
+
+function formatMinutosHumanos(mins) {
+  if (mins == null) return null;
+  const h = Math.floor(mins / 60), r = mins % 60;
+  if (h && r) return `${h} h ${r} min`;
+  if (h) return `${h} h`;
+  return `${mins} min`;
+}
+
+/** Disponibilidad verificada en suscripciones que el usuario tiene contratadas. */
+function disponibilidadVerificadaEnMis(t) {
+  const selected = state.db.misPlataformas || [];
+  const hits = [];
+  const pending = [];
+  for (const s of t.streaming_es || []) {
+    if (s.tipo !== "subscription" || esTiendaAlquilerCompra(s.plataforma)) continue;
+    const nombre = normalizarNombreSuscripcion(s.plataforma);
+    if (!nombre) continue;
+    const canon = PLATAFORMAS_ES.includes(nombre) ? nombre : "Otra";
+    const verificado = String(s.estado || "").toLowerCase() === "verificado";
+    if (!selected.length) {
+      if (verificado) hits.push(nombre);
+      else pending.push(nombre);
+      continue;
+    }
+    if (!selected.includes(canon)) continue;
+    if (verificado) hits.push(nombre);
+    else pending.push(nombre);
+  }
+  return {
+    verified: [...new Set(hits)],
+    pending: [...new Set(pending)],
+    sinPlataformas: !selected.length,
+  };
+}
+
+function generosFavoritosDeHistorial() {
+  const scores = new Map();
+  for (const row of state.db.lista) {
+    if (row.estado !== "vista" || row.puntuacion == null || row.puntuacion < 7) continue;
+    const ficha = state.db.fichas[row.id] || {};
+    for (const g of ficha.generos || []) {
+      scores.set(g, (scores.get(g) || 0) + row.puntuacion);
+    }
+  }
+  return [...scores.entries()].sort((a, b) => b[1] - a[1]).map(([g]) => g);
+}
+
+function cabeEnTiempo(mins, preset, { estricto = false } = {}) {
+  if (preset.id === "libre") return true;
+  if (mins == null) return !estricto; // desconocida: no excluir salvo estricto
+  if (preset.id === "corto") return mins < 45;
+  if (preset.id === "medio") return mins >= 70 && mins <= 120;
+  if (preset.id === "largo") return mins >= 120;
+  return true;
+}
+
+let queVeoShuffle = 0;
+
+function sugerirQueVeoHoy(prefs) {
+  const preset = TIEMPO_PRESETS[prefs.tiempo] || TIEMPO_PRESETS.libre;
+  const tipo = prefs.tipo || "ambas";
+  const animo = prefs.animo || "cualquiera";
+  const generosAnimo = ANIMO_A_GENEROS[animo] || [];
+  const historialGeneros = generosFavoritosDeHistorial();
+  const tieneHistorial = historialGeneros.length > 0;
+  const misPlataformas = state.db.misPlataformas || [];
+  const candidatos = [];
+
+  for (const t of todosLosTitulos()) {
+    if (t._sinMarcar) continue;
+    if (t.estado === "vista") continue; // nunca vistas; en curso = pendiente con progreso
+    if (tipo === "pelicula" && t.tipo !== "pelicula") continue;
+    if (tipo === "serie" && t.tipo !== "serie") continue;
+    if (generosAnimo.length && !(t.generos || []).some((g) => generosAnimo.includes(g))) continue;
+
+    const mins = minutosDeTitulo(t);
+    if (!cabeEnTiempo(mins, preset, { estricto: false })) continue;
+
+    const avail = disponibilidadVerificadaEnMis(t);
+    let score = 0;
+    const reasons = [];
+
+    const enCurso = t.tipo === "serie" && tieneProgreso(t) && t.estado !== "vista";
+    if (enCurso) {
+      score += 100;
+      reasons.push(`Tienes en curso ${formatProgreso(t).replace(/^Vas por /, "")}`);
+    }
+    if (t.estado === "pendiente" && !enCurso) {
+      score += 40;
+      reasons.push("La tienes pendiente");
+    }
+    if (t.favorita) {
+      score += 35;
+      reasons.push("La marcaste como favorita");
+    }
+    if (tieneHistorial) {
+      const match = (t.generos || []).filter((g) => historialGeneros.slice(0, 5).includes(g));
+      if (match.length) {
+        score += 25 * match.length;
+        reasons.push(`Coincide con ${match[0]}, tu género más puntuado`);
+      }
+    } else if (generosAnimo.length) {
+      const match = (t.generos || []).filter((g) => generosAnimo.includes(g));
+      if (match.length) {
+        score += 20;
+        reasons.push(`Coincide con ${match[0]}, que has elegido`);
+      }
+    }
+    if (misPlataformas.length) {
+      if (avail.verified.length) {
+        score += 30;
+        reasons.push(`Está en ${avail.verified[0]}, que tienes`);
+      } else if (avail.pending.length) {
+        score += 5;
+        reasons.push(`Disponibilidad por verificar en ${avail.pending[0]}`);
+      }
+    }
+    if (mins != null) {
+      if (cabeEnTiempo(mins, preset, { estricto: true })) score += 10;
+      reasons.push(`Dura ${formatMinutosHumanos(mins)}${t.tipo === "serie" ? "/ep" : ""}`);
+    } else {
+      reasons.push("Duración desconocida");
+    }
+
+    candidatos.push({ t, score, reasons, mins, avail });
+  }
+
+  candidatos.sort((a, b) => b.score - a.score
+    || Date.parse(b.t.actualizado_en || 0) - Date.parse(a.t.actualizado_en || 0)
+    || a.t.titulo.localeCompare(b.t.titulo, "es"));
+
+  // Agrupar por score y rotar el primer grupo con «Otras ideas»
+  if (candidatos.length && queVeoShuffle > 0) {
+    const top = candidatos[0].score;
+    let i = 0;
+    while (i < candidatos.length && candidatos[i].score === top) i += 1;
+    const group = candidatos.slice(0, i);
+    const rest = candidatos.slice(i);
+    const rot = queVeoShuffle % group.length;
+    candidatos.splice(0, candidatos.length, ...group.slice(rot), ...group.slice(0, rot), ...rest);
+  }
+
+  const picks = candidatos.slice(0, 5);
+  return {
+    picks,
+    meta: {
+      tieneHistorial,
+      sinPlataformas: !misPlataformas.length,
+      criterio: [
+        "Priorizo series en curso, luego pendientes y favoritas.",
+        tieneHistorial
+          ? "Uso los géneros de tus vistas con nota alta (≥7)."
+          : "Aún no tengo historial, me baso en lo que has elegido.",
+        misPlataformas.length
+          ? "Solo cuento suscripción verificada en tus plataformas."
+          : "No has marcado plataformas: no filtro por disponibilidad.",
+        "La duración sale solo de la ficha; si falta, lo digo y no te excluyo.",
+      ],
+      preset,
+      animo,
+      tipo,
+    },
+  };
+}
+
 function filtrarYOrdenar() {
   const f = state.filtros;
   const list = todosLosTitulos().filter((t) => {
@@ -553,6 +878,9 @@ function filtrarYOrdenar() {
     if (f.favoritas && (t._sinMarcar || !t.favorita)) return false;
     if (f.en_cines && !t.en_cines) return false;
     if (f.mis_plataformas && !enMisPlataformas(t)) return false;
+    if (f.continuar) {
+      if (t._sinMarcar || t.tipo !== "serie" || t.estado === "vista" || !tieneProgreso(t)) return false;
+    }
     if (f.plataforma !== "todas" && !(t.plataformas || []).some((p) => plataformaCoincideFiltro(p.nombre, f.plataforma))) return false;
     if (f.genero !== "todos" && !(t.generos || []).includes(f.genero)) return false;
     return coincideTitulo(t, f.q);
@@ -1037,15 +1365,19 @@ function renderHero() {
 
 function renderFilterState(count) {
   const f = state.filtros;
-  const active = f.q || f.estado !== "todos" || f.tipo !== "todos" || f.plataforma !== "todas" || f.genero !== "todos" || f.favoritas || f.en_cines || f.mis_plataformas;
+  const active = f.q || f.estado !== "todos" || f.tipo !== "todos" || f.plataforma !== "todas" || f.genero !== "todos" || f.favoritas || f.en_cines || f.mis_plataformas || f.continuar;
   $("#resultados").innerHTML = `<strong>${count}</strong> ${count === 1 ? "título" : "títulos"}${active ? " encontrados" : " para descubrir"}`;
   $("#btn-limpiar").hidden = !active;
   const all = todosLosTitulos();
   $("#count-en-cines").textContent = all.filter((t) => t.en_cines).length;
   $("#count-favoritas").textContent = all.filter((t) => t.favorita).length;
   $("#count-mis-plataformas").textContent = all.filter(enMisPlataformas).length;
+  const countCont = $("#count-continuar");
+  if (countCont) countCont.textContent = String(seriesEnCurso().length);
   $("#mis-plataformas-total").textContent = (state.db.misPlataformas || []).length;
   $("#filtro-mis-plataformas").checked = f.mis_plataformas;
+  const contEl = $("#filtro-continuar");
+  if (contEl) contEl.checked = f.continuar;
   ["estado", "tipo", "plataforma", "genero"].forEach((key) => {
     const select = $("#filtro-" + key);
     select.closest(".filter-control").classList.toggle("is-active", select.value !== (key === "plataforma" ? "todas" : "todos"));
@@ -1074,6 +1406,8 @@ function renderFiltrosOpciones() {
   $("#filtro-favoritas").checked = state.filtros.favoritas;
   const enCinesEl = $("#filtro-en-cines");
   if (enCinesEl) enCinesEl.checked = state.filtros.en_cines;
+  const contFiltro = $("#filtro-continuar");
+  if (contFiltro) contFiltro.checked = state.filtros.continuar;
 }
 
 function renderGrid() {
@@ -1091,8 +1425,8 @@ function renderGrid() {
   grid.innerHTML = list.map((t) => {
     const sinMarcar = Boolean(t._sinMarcar);
     const title = escapeHtml(t.titulo);
+    const progressLine = !sinMarcar && t.tipo === "serie" && tieneProgreso(t) ? formatProgreso(t) : "";
     const metaBits = [t.anio || "Año por verificar", t.tipo === "serie" ? "Serie" : "Película",
-      !sinMarcar && t.tipo === "serie" && t.temporada != null ? `T${t.temporada}` : null,
       !sinMarcar && t.puntuacion != null ? `★ ${t.puntuacion}/10` : null].filter(Boolean).join(" · ");
     const platforms = plataformasCanonicas(t.plataformas);
     const porVerificar = esFichaUsuario(t) && !(t.streaming_es || []).length && !platforms.length;
@@ -1112,6 +1446,7 @@ function renderGrid() {
         <div class="card-body">
           <h3 class="card-title"><button class="title-button" type="button" data-action="detalle">${title}</button></h3>
           <div class="meta">${escapeHtml(metaBits)}</div>
+          ${progressLine ? `<div class="meta card-progress" aria-label="Progreso">${escapeHtml(progressLine)}</div>` : ""}
           <div class="chips genres">${(t.generos || []).slice(0, 2).map((g) => `<span class="chip">${escapeHtml(g)}</span>`).join("")}</div>
           <div class="chips platforms">${plataformasHtml(platforms.slice(0, 2), { porVerificar })}${extraPlatforms}</div>
           <div class="card-actions quick-actions">
@@ -1127,11 +1462,40 @@ function renderGrid() {
   }
 }
 
+function renderContinuar() {
+  const el = $("#continuar-viendo");
+  if (!el) return;
+  if (state.filtros.continuar) {
+    el.hidden = true;
+    el.innerHTML = "";
+    return;
+  }
+  const list = seriesEnCurso().slice(0, 8);
+  const countEl = $("#count-continuar");
+  if (countEl) countEl.textContent = String(seriesEnCurso().length);
+  if (!list.length) {
+    el.hidden = true;
+    el.innerHTML = "";
+    return;
+  }
+  el.hidden = false;
+  el.innerHTML = `<div class="continuar-head"><div><p class="eyebrow">SIGUE DONDE LO DEJASTE</p><h3>Continuar viendo</h3></div>
+    <button type="button" class="btn btn-ghost btn-sm" id="btn-ver-continuar">Ver todas (${list.length})</button></div>
+    <div class="continuar-rail">${list.map((t) => {
+      const title = escapeHtml(t.titulo);
+      return `<button type="button" class="continuar-card" data-continuar-id="${escapeHtml(t.id)}" aria-label="Continuar ${title}: ${escapeHtml(formatProgreso(t))}">
+        <span class="continuar-poster">${t.poster ? `<img src="${escapeHtml(t.poster)}" alt="" />` : `<span class="poster-fallback">sin póster</span>`}</span>
+        <span class="continuar-copy"><strong>${title}</strong><span class="meta">${escapeHtml(formatProgreso(t))}</span></span>
+      </button>`;
+    }).join("")}</div>`;
+}
+
 function renderAll() {
   renderAuth();
   renderHero();
   renderStats();
   renderFiltrosOpciones();
+  renderContinuar();
   renderGrid();
 }
 
@@ -1337,7 +1701,7 @@ function openDetalle(t) {
         t.tipo === "serie" ? "Serie" : "Película",
         t.anio || "¿?",
         formatDuracion(t),
-        t.temporada != null ? `Temporada ${t.temporada}` : null,
+        tieneProgreso(t) ? formatProgreso(t) : null,
         labelEstado(t.estado),
         t.puntuacion != null ? `Puntuación ${t.puntuacion}/10` : "Sin puntuación",
         t.favorita ? "Favorita" : null,
@@ -1415,6 +1779,7 @@ function openDetalle(t) {
             ? `<div class="detail-section"><h4>Nota de catálogo</h4><p style="margin:0">${escapeHtml(t.nota)}</p></div>`
             : ""
         }
+        ${progresoPanelHtml(t, sinMarcar)}
         ${
           sinMarcar
             ? ""
@@ -1671,6 +2036,75 @@ async function bootSync() {
   }
 }
 
+
+function openQueVeoHoy() {
+  queVeoShuffle = 0;
+  const box = $("#queveo-resultados");
+  if (box) box.innerHTML = "";
+  const otras = $("#btn-otras-ideas");
+  if (otras) otras.hidden = true;
+  const crit = $("#queveo-criterio-body");
+  if (crit) crit.textContent = "";
+  openModal("#modal-que-veo");
+}
+
+function leerPrefsQueVeo() {
+  const tiempo = document.querySelector('input[name="qv-tiempo"]:checked')?.value || "medio";
+  return {
+    tiempo,
+    tipo: $("#qv-tipo")?.value || "ambas",
+    animo: $("#qv-animo")?.value || "cualquiera",
+  };
+}
+
+function renderQueVeoResultados(result) {
+  const box = $("#queveo-resultados");
+  const otras = $("#btn-otras-ideas");
+  const crit = $("#queveo-criterio-body");
+  if (!box) return;
+  if (crit) {
+    const notes = [...result.meta.criterio];
+    if (result.meta.sinPlataformas) notes.push("No has marcado plataformas contratadas.");
+    crit.innerHTML = notes.map((n) => `<p style="margin:0">${escapeHtml(n)}</p>`).join("");
+  }
+  if (!result.picks.length) {
+    box.innerHTML = `<div class="queveo-empty">No encuentro candidatos con estos criterios. Prueba «Sin límite», otro género o añade títulos a tu lista.</div>`;
+    if (otras) otras.hidden = true;
+    return;
+  }
+  if (otras) otras.hidden = false;
+  box.innerHTML = result.picks.map(({ t, reasons, avail }) => {
+    const title = escapeHtml(t.titulo);
+    const poster = t.poster
+      ? `<img src="${escapeHtml(t.poster)}" alt="" />`
+      : `<div class="queveo-poster-fallback">sin póster</div>`;
+    const availNote = avail.sinPlataformas
+      ? `<p class="meta" style="margin:4px 0 0">Sin plataformas tuyas configuradas</p>`
+      : avail.verified.length
+        ? ""
+        : avail.pending.length
+          ? `<p class="meta" style="margin:4px 0 0"><span class="chip chip-pending">Disponibilidad por verificar</span></p>`
+          : `<p class="meta" style="margin:4px 0 0">No está en tus plataformas verificadas</p>`;
+    return `<article class="queveo-card" data-id="${escapeHtml(t.id)}">
+      ${poster}
+      <div>
+        <h3>${title}</h3>
+        <p class="meta" style="margin:0">${escapeHtml([t.anio || "¿?", t.tipo === "serie" ? "Serie" : "Película", labelEstado(t.estado)].join(" · "))}</p>
+        ${availNote}
+        <ul class="queveo-reasons">${reasons.slice(0, 4).map((r) => `<li>${escapeHtml(r)}</li>`).join("")}</ul>
+      </div>
+      <button type="button" class="btn" data-queveo-open="${escapeHtml(t.id)}">Ver ficha</button>
+    </article>`;
+  }).join("");
+}
+
+function runQueVeoHoy({ reshuffle = false } = {}) {
+  if (reshuffle) queVeoShuffle += 1;
+  else queVeoShuffle = 0;
+  const result = sugerirQueVeoHoy(leerPrefsQueVeo());
+  renderQueVeoResultados(result);
+}
+
 function bindEvents() {
   // El alto real del encabezado mantiene los filtros pegados también en móvil.
   const syncHeaderHeight = () => document.documentElement.style.setProperty("--header-height", $(".topbar").getBoundingClientRect().height + "px");
@@ -1680,7 +2114,7 @@ function bindEvents() {
 
   $("#btn-limpiar").addEventListener("click", () => {
     clearTimeout(searchTimer);
-    Object.assign(state.filtros, { q: "", estado: "todos", tipo: "todos", plataforma: "todas", genero: "todos", favoritas: false, en_cines: false, mis_plataformas: false });
+    Object.assign(state.filtros, { q: "", estado: "todos", tipo: "todos", plataforma: "todas", genero: "todos", favoritas: false, en_cines: false, mis_plataformas: false, continuar: false });
     $("#busqueda").value = "";
     $("#filtro-estado").value = "todos";
     $("#filtro-tipo").value = "todos";
@@ -1720,6 +2154,37 @@ function bindEvents() {
     toast("Tus plataformas se han guardado");
   });
   $("#modal-plataformas").addEventListener("click", (e) => { if (e.target === e.currentTarget) closeModal("#modal-plataformas"); });
+
+  $("#btn-que-veo")?.addEventListener("click", () => openQueVeoHoy());
+  $("#form-que-veo")?.addEventListener("submit", (e) => { e.preventDefault(); runQueVeoHoy(); });
+  $("#btn-otras-ideas")?.addEventListener("click", () => runQueVeoHoy({ reshuffle: true }));
+  $("#modal-que-veo")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) closeModal("#modal-que-veo");
+    const openBtn = e.target.closest("[data-queveo-open]");
+    if (openBtn) {
+      const id = openBtn.dataset.queveoOpen;
+      const t = getMerged(id) || getMergedOrCatalog(id);
+      if (t) { closeModal("#modal-que-veo"); openDetalle(t); }
+    }
+  });
+  $("#filtro-continuar")?.addEventListener("change", (e) => {
+    state.filtros.continuar = e.target.checked;
+    renderAll();
+  });
+  $("#continuar-viendo")?.addEventListener("click", (e) => {
+    if (e.target.closest("#btn-ver-continuar")) {
+      state.filtros.continuar = true;
+      const box = $("#filtro-continuar");
+      if (box) box.checked = true;
+      renderAll();
+      $("#grid")?.focus?.();
+      return;
+    }
+    const card = e.target.closest("[data-continuar-id]");
+    if (!card) return;
+    const t = getMerged(card.dataset.continuarId);
+    if (t) openDetalle(t);
+  });
   $("#filtro-mis-plataformas").addEventListener("change", (e) => { state.filtros.mis_plataformas = e.target.checked; renderGrid(); });
   $("#score-skip").addEventListener("click", cerrarPuntuacion);
   $("#score-values").addEventListener("click", (e) => { const button = e.target.closest("[data-score]"); if (button) guardarPuntuacion(Number(button.dataset.score)); });
@@ -1897,6 +2362,29 @@ function bindEvents() {
         closeModal("#modal-detalle");
         renderAll();
       }
+    } else if (act === "prog-guardar") {
+      const panel = btn.closest("[data-progress-id]") || $("#modal-detalle");
+      const tInput = panel.querySelector('[data-prog="temporada"]');
+      const eInput = panel.querySelector('[data-prog="episodio"]');
+      const temporada = tInput?.value === "" ? null : Number(tInput.value);
+      const episodio = eInput?.value === "" ? null : Number(eInput.value);
+      if (asegurarProgreso(id, { temporada, episodio })) {
+        toast("Progreso guardado");
+        openDetalle(getMerged(id));
+        renderAll();
+      }
+    } else if (act === "prog-siguiente") {
+      if (siguienteEpisodio(id)) {
+        toast("Siguiente episodio marcado");
+        openDetalle(getMerged(id));
+        renderAll();
+      }
+    } else if (act === "prog-temp-sig") {
+      if (empezarTemporadaSiguiente(id)) {
+        toast("Temporada siguiente empezada");
+        openDetalle(getMerged(id));
+        renderAll();
+      }
     }
   });
 
@@ -1949,6 +2437,7 @@ function bindEvents() {
       closeModal("#modal-detalle");
       closeModal("#modal-login");
       closeModal("#modal-buscar");
+      closeModal("#modal-que-veo");
     }
   });
 }

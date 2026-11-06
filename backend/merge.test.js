@@ -32,6 +32,7 @@ function item(partial) {
     anadido_en: T0,
     visto_en: null,
     temporada: null,
+    episodio: null,
     plataformas: [],
     ...partial,
   };
@@ -203,6 +204,7 @@ test("la fusión no renombra campos ni deja user_id o borrado en la lista", () =
   assert.deepEqual(Object.keys(merged.lista[0]).sort(), [
     "actualizado_en",
     "anadido_en",
+    "episodio",
     "estado",
     "favorita",
     "id",
@@ -431,3 +433,32 @@ function cuerpo(sql, nombre) {
   assert.ok(start >= 0 && as > start && end > as, nombre);
   return sql.slice(as + 4, end);
 }
+
+test("episodio viaja con la fila y gana por actualizado_en", () => {
+  const local = fusion(
+    [item({ temporada: 2, episodio: 5, actualizado_en: T3 })],
+    [item({ temporada: 1, episodio: 1, actualizado_en: T1, borrado: false })],
+  );
+  assert.equal(local.lista[0].temporada, 2);
+  assert.equal(local.lista[0].episodio, 5);
+  assert.equal(local.toUpsert[0].episodio, 5);
+});
+
+test("rechaza temporada/episodio negativos (CHECK episodio >= 0)", () => {
+  const cleaned = fusion(
+    [item({ temporada: -2, episodio: -5, actualizado_en: T3 })],
+    [],
+  );
+  assert.equal(cleaned.lista[0].temporada, null);
+  assert.equal(cleaned.lista[0].episodio, null);
+  assert.equal(cleaned.toUpsert[0].temporada, null);
+  assert.equal(cleaned.toUpsert[0].episodio, null);
+
+  const zeroOk = fusion(
+    [item({ temporada: 0, episodio: 0, actualizado_en: T3 })],
+    [],
+  );
+  assert.equal(zeroOk.lista[0].temporada, 0);
+  assert.equal(zeroOk.lista[0].episodio, 0);
+  assert.equal(zeroOk.toUpsert[0].episodio, 0);
+});

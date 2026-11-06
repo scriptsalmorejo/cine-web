@@ -6,7 +6,7 @@
   <meta name="description" content="Lista personal de películas y series en España, con catálogo verificado (TMDB + JustWatch)." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <title>Cine Web — Películas y series</title>
-  <link rel="stylesheet" href="styles.css?v=20261108a" />
+  <link rel="stylesheet" href="styles.css?v=20261109a" />
 </head>
 <body>
   <a class="skip-link" href="#grid">Saltar al catálogo</a>
@@ -23,16 +23,17 @@
         <kbd aria-hidden="true">/</kbd>
       </div>
       <div class="header-end">
+        <button type="button" class="btn btn-primary btn-header" id="btn-que-veo" aria-haspopup="dialog" aria-label="Qué veo hoy"><span class="btn-ico" aria-hidden="true">◎</span><span class="btn-label-full">Qué veo hoy</span><span class="btn-label-short">Hoy</span></button>
         <div class="stats" id="stats" aria-live="polite"></div>
         <div class="auth-slot" id="auth-slot">
-          <button type="button" class="btn" id="btn-entrar" aria-haspopup="dialog">Entrar</button>
+          <button type="button" class="btn btn-header" id="btn-entrar" aria-haspopup="dialog">Entrar</button>
           <div class="auth-session" id="auth-session" hidden>
             <span class="auth-email" id="auth-email"></span>
             <button type="button" class="btn btn-ghost btn-sm" id="btn-salir">Salir</button>
           </div>
         </div>
         <details class="library-menu">
-          <summary class="btn library-toggle" aria-label="Opciones de mi lista"><span aria-hidden="true">☰</span><span>Mi lista</span></summary>
+          <summary class="btn library-toggle btn-header" aria-label="Opciones de mi lista"><span class="btn-ico" aria-hidden="true">☰</span><span class="btn-label-full">Mi lista</span><span class="btn-label-short">Lista</span></summary>
           <div class="top-actions">
             <span class="menu-heading">Tu biblioteca personal</span>
             <button type="button" class="btn" id="btn-mis-plataformas">Mis plataformas <span id="mis-plataformas-total">0</span></button>
@@ -77,8 +78,10 @@
           <label class="check-inline" for="filtro-mis-plataformas"><input type="checkbox" id="filtro-mis-plataformas" /><span aria-hidden="true">◉</span> En mis plataformas <span class="chip-count" id="count-mis-plataformas">0</span></label>
           <label class="check-inline" for="filtro-en-cines"><input type="checkbox" id="filtro-en-cines" /><span aria-hidden="true">▣</span> En cines <span class="chip-count" id="count-en-cines">0</span></label>
           <label class="check-inline" for="filtro-favoritas"><input type="checkbox" id="filtro-favoritas" /><span aria-hidden="true">★</span> Favoritas <span class="chip-count" id="count-favoritas">0</span></label>
+          <label class="check-inline" for="filtro-continuar"><input type="checkbox" id="filtro-continuar" /><span aria-hidden="true">▶</span> Continuar viendo <span class="chip-count" id="count-continuar">0</span></label>
         </div>
       </nav>
+      <section class="continuar-viendo" id="continuar-viendo" aria-label="Continuar viendo" hidden></section>
       <div class="results-bar">
         <p id="resultados" role="status"></p>
         <div class="results-actions"><button class="btn btn-ghost" id="btn-limpiar" type="button" hidden>Limpiar filtros</button>
@@ -249,9 +252,58 @@
     </div>
   </div>
 
-  <script type="module" src="backend/sync.js?v=20261108a"></script>
-  <script src="seed.js?v=20261108a"></script>
-  <script src="catalogo.js?v=20261108a"></script>
-  <script src="app.js?v=20261108a"></script>
+
+  <div class="modal-backdrop" id="modal-que-veo" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-que-veo-title">
+    <div class="modal modal-lg">
+      <header>
+        <h2 id="modal-que-veo-title">Qué veo hoy</h2>
+        <button type="button" class="btn btn-ghost btn-sm" data-close="#modal-que-veo" aria-label="Cerrar Qué veo hoy">✕</button>
+      </header>
+      <form id="form-que-veo">
+        <div class="content">
+          <p class="platforms-description">Te propongo 3–5 títulos de tu lista con motivos claros. No invento duraciones ni plataformas.</p>
+          <div class="queveo-controls">
+            <fieldset class="queveo-fieldset">
+              <legend>Tiempo disponible</legend>
+              <label class="check-inline compact"><input type="radio" name="qv-tiempo" value="corto" /><span>&lt;45 min</span></label>
+              <label class="check-inline compact"><input type="radio" name="qv-tiempo" value="medio" checked /><span>~1 h 30</span></label>
+              <label class="check-inline compact"><input type="radio" name="qv-tiempo" value="largo" /><span>2 h+</span></label>
+              <label class="check-inline compact"><input type="radio" name="qv-tiempo" value="libre" /><span>Sin límite</span></label>
+            </fieldset>
+            <label>Tipo
+              <select class="select" id="qv-tipo" name="qv-tipo">
+                <option value="ambas">Películas y series</option>
+                <option value="pelicula">Solo películas</option>
+                <option value="serie">Solo series</option>
+              </select>
+            </label>
+            <label>Género / ánimo (opcional)
+              <select class="select" id="qv-animo" name="qv-animo">
+                <option value="cualquiera">Cualquiera</option>
+                <option value="drama">Drama</option>
+                <option value="comedia">Comedia</option>
+                <option value="accion">Acción / aventura</option>
+                <option value="terror">Terror / misterio</option>
+                <option value="scifi">Ciencia ficción / fantasía</option>
+                <option value="romantico">Romance</option>
+                <option value="documental">Documental</option>
+              </select>
+            </label>
+          </div>
+          <div class="queveo-actions">
+            <button type="submit" class="btn btn-primary">Sugerir</button>
+            <button type="button" class="btn" id="btn-otras-ideas" hidden>Otras ideas</button>
+          </div>
+          <div id="queveo-resultados" class="queveo-resultados" aria-live="polite"></div>
+          <details class="queveo-criterio" id="queveo-criterio"><summary>Cómo elijo</summary><div class="meta" id="queveo-criterio-body"></div></details>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="backend/sync.js?v=20261109a"></script>
+  <script src="seed.js?v=20261109a"></script>
+  <script src="catalogo.js?v=20261109a"></script>
+  <script src="app.js?v=20261109a"></script>
 </body>
 </html>
