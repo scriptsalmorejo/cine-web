@@ -99,7 +99,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/8sNiAPPYU14PUepFNeSNGUTiHW.jpg",
+    "duracion": {
+      "minutos": 169
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/157336",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1417",
@@ -192,7 +200,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/6G6nqSW9S7EHA9HrYl0Z8uo2H7f.jpg",
+    "duracion": {
+      "minutos": 112
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1417",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:99",
@@ -236,7 +252,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/tilClWjFZeUTGJu0pxgF72fvUmN.jpg",
+    "duracion": {
+      "minutos": 101
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/99",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:76341",
@@ -354,7 +378,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/gqrnQA6Xppdl8vIb2eJc58VC1tW.jpg",
+    "duracion": {
+      "minutos": 120
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/76341",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:244786",
@@ -423,7 +455,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/fRGxZuo7jJUWQsVg9PREb98Aclp.jpg",
+    "duracion": {
+      "minutos": 105
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/244786",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:419430",
@@ -517,7 +557,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/bBQHALHRAaaORlPNXv7fNcRXYdx.jpg",
+    "duracion": {
+      "minutos": 103
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/419430",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:872585",
@@ -586,7 +634,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/neeNHeXjMF5fXoCJRsOmkNGC7q.jpg",
+    "duracion": {
+      "minutos": 181
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/872585",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:693134",
@@ -679,7 +735,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/eZ239CUp1d6OryZEBPnO2n87gMG.jpg",
+    "duracion": {
+      "minutos": 167
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/693134",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:933260",
@@ -772,7 +836,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/bVSOgrxasVJF6V71T7v2KfBRSzu.jpg",
+    "duracion": {
+      "minutos": 141
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/933260",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:265195",
@@ -801,7 +873,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/dHnki2Dh6lbOtfksrh8H5lg08f5.jpg",
+    "duracion": {
+      "minutos": 122
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/265195",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:25376",
@@ -862,7 +942,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/zaANf06OtqDJr5saqp5ymEkDPsi.jpg",
+    "duracion": {
+      "minutos": 129
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/25376",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:974576",
@@ -915,7 +1003,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/eZzNdjNDvaSoyywy9ICg2UmFwul.jpg",
+    "duracion": {
+      "minutos": 120
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/974576",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:974950",
@@ -959,7 +1055,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/u2eA9pqi1q3DvevT7RuDuJHxxBT.jpg",
+    "duracion": {
+      "minutos": 130
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/974950",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1396",
@@ -995,7 +1099,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg",
+    "duracion": {
+      "minutos_episodio": 43,
+      "temporadas": 5
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/1396",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:66732",
@@ -1024,7 +1137,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/9P4IIMYY3HifqeruZq0ZZ9g7YUi.jpg",
+    "duracion": {
+      "minutos_episodio": 72,
+      "temporadas": 5
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/66732",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:71446",
@@ -1052,7 +1174,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/xGexTKCJDkl12dTW4YCBDXWb1AD.jpg",
+    "duracion": {
+      "minutos_episodio": 50,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/71446",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:100088",
@@ -1103,7 +1234,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/lY2DhbA7Hy44fAKddr06UrXWWaQ.jpg",
+    "duracion": {
+      "minutos_episodio": 59,
+      "temporadas": 2
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/100088",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:95396",
@@ -1132,7 +1272,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/ixgFmf1X59PUZam2qbAfskx2gQr.jpg",
+    "duracion": {
+      "minutos_episodio": 54,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/95396",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:82856",
@@ -1160,7 +1309,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/9zcbqSxdsRMZWHYtyCd1nXPr2xq.jpg",
+    "duracion": {
+      "minutos_episodio": 38,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/82856",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:119051",
@@ -1189,7 +1347,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/iHSwvRVsRyxpX7FE7GbviaDvgGZ.jpg",
+    "duracion": {
+      "minutos_episodio": 61,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/119051",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:87108",
@@ -1240,7 +1407,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/900tHlUYUkp7Ol04XFSoAaEIXcT.jpg",
+    "duracion": {
+      "minutos_episodio": 61,
+      "temporadas": 1
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/87108",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:62099",
@@ -1260,7 +1436,16 @@ window.CINE_CATALOGO = [
       "JustWatch"
     ],
     "verificado_en": "2026-11-06",
-    "nota": "streaming por verificar"
+    "nota": "streaming por verificar",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/5qaax4Avwtdl045OIHr2OD2fr9P.jpg",
+    "duracion": {
+      "minutos_episodio": 58,
+      "temporadas": 4
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/62099",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:93405",
@@ -1289,7 +1474,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/5aE1kxWg6RhgQxJTXTxifv4uq7P.jpg",
+    "duracion": {
+      "minutos_episodio": 58,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/93405",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:94997",
@@ -1334,7 +1528,16 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/577eXC8wFQT0eUrJcgznSiFPRmk.jpg",
+    "duracion": {
+      "minutos_episodio": 66,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/94997",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:106379",
@@ -1363,6 +1566,15 @@ window.CINE_CATALOGO = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/coaPCIqQBPUZsOnJcWZxhaORcDT.jpg",
+    "duracion": {
+      "minutos_episodio": 63,
+      "temporadas": 2
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/106379",
+      "verificado_en": "2026-11-06"
+    }
   }
 ];

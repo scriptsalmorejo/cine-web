@@ -73,7 +73,15 @@ window.CINE_SEED = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-05"
+    "verificado_en": "2026-11-05",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/c6OLXfKAk5BKeR6broC8pYiCquX.jpg",
+    "duracion": {
+      "minutos": 139
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/550",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:136315",
@@ -101,7 +109,16 @@ window.CINE_SEED = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-05"
+    "verificado_en": "2026-11-05",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/aJtG4txtmiRHwAAqENQHZvBs6kY.jpg",
+    "duracion": {
+      "minutos_episodio": 22,
+      "temporadas": 5
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/136315",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:438631",
@@ -201,7 +218,15 @@ window.CINE_SEED = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-05"
+    "verificado_en": "2026-11-05",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/jYEW5xZkZk2WTrdbMGAPFuBqbDc.jpg",
+    "duracion": {
+      "minutos": 155
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/438631",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:70523",
@@ -230,7 +255,16 @@ window.CINE_SEED = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-05"
+    "verificado_en": "2026-11-05",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/3jDXL4Xvj3AzDOF6UH1xeyHW8MH.jpg",
+    "duracion": {
+      "minutos_episodio": 63,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/70523",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:496243",
@@ -323,7 +357,15 @@ window.CINE_SEED = [
       "TMDB",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-05"
+    "verificado_en": "2026-11-05",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/TU9NIjwzjoKPwQHoHshkFcQUCG.jpg",
+    "duracion": {
+      "minutos": 132
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/496243",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:247718",
@@ -379,7 +421,16 @@ window.CINE_SEED = [
       "SkyShowtime"
     ],
     "verificado_en": "2026-11-05",
-    "nota": "Pendiente: temporada 2 (en emisión; ~7/10 a 5 nov)."
+    "nota": "Pendiente: temporada 2 (en emisión; ~7/10 a 5 nov).",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/h0OC7ouop8YLwbAVfS3UUE2Lw4T.jpg",
+    "duracion": {
+      "minutos_episodio": 50,
+      "temporadas": 2
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/247718",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1571955",
@@ -410,7 +461,15 @@ window.CINE_SEED = [
       "Netflix Top 10"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "JustWatch ES ranking diario #1 (2026-11-06); Netflix Top 10 España #1 (26/10–1/11/2026)"
+    "popularidad_fuente": "JustWatch ES ranking diario #1 (2026-11-06); Netflix Top 10 España #1 (26/10–1/11/2026)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/uI3kWI7kGW5E0F8WduewgQYPt34.jpg",
+    "duracion": {
+      "minutos": 122
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1571955",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1507696",
@@ -440,7 +499,15 @@ window.CINE_SEED = [
       "JustWatch"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "JustWatch ES ranking diario #2 (2026-11-06)"
+    "popularidad_fuente": "JustWatch ES ranking diario #2 (2026-11-06)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/o3XwuDUj0n8qnK91p6q8LKfr6rj.jpg",
+    "duracion": {
+      "minutos": 96
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1507696",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1083381",
@@ -502,7 +569,15 @@ window.CINE_SEED = [
       "JustWatch"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "JustWatch ES ranking diario #3 (2026-11-06)"
+    "popularidad_fuente": "JustWatch ES ranking diario #3 (2026-11-06)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/QNE9Ihuas4duMHJYGQgAcuRtXz.jpg",
+    "duracion": {
+      "minutos": 111
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1083381",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:293670",
@@ -548,7 +623,15 @@ window.CINE_SEED = [
     ],
     "verificado_en": "2026-11-06",
     "popularidad_fuente": "JustWatch ES ranking diario #4 (2026-11-06)",
-    "nota": "por verificar: JustWatch ES lista fuboTV, plataforma poco habitual en España"
+    "nota": "por verificar: JustWatch ES lista fuboTV, plataforma poco habitual en España",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/9qxBNfI1QFbiZS62fsgaUd563t2.jpg",
+    "duracion": {
+      "minutos": 156
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/293670",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1078605",
@@ -634,7 +717,15 @@ window.CINE_SEED = [
       "Netflix Top 10"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "JustWatch ES ranking diario #10 (2026-11-06); Netflix Top 10 España #3 (26/10–1/11/2026)"
+    "popularidad_fuente": "JustWatch ES ranking diario #10 (2026-11-06); Netflix Top 10 España #3 (26/10–1/11/2026)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/8VyTWJrNEyV2MTWvniDVp0MpOAe.jpg",
+    "duracion": {
+      "minutos": 129
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1078605",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:687163",
@@ -719,7 +810,15 @@ window.CINE_SEED = [
       "JustWatch"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "JustWatch ES ranking diario #9 (2026-11-06)"
+    "popularidad_fuente": "JustWatch ES ranking diario #9 (2026-11-06)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/8Tfys3mDZVp4tNoH2ktm06a0Tau.jpg",
+    "duracion": {
+      "minutos": 156
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/687163",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:335535",
@@ -749,7 +848,16 @@ window.CINE_SEED = [
       "Netflix Top 10"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "Netflix Top 10 España series #1 (26/10–1/11/2026)"
+    "popularidad_fuente": "Netflix Top 10 España series #1 (26/10–1/11/2026)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/fyuUkmbcTqH0NEgywaLlsYL720K.jpg",
+    "duracion": {
+      "minutos_episodio": 28,
+      "temporadas": 1
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/335535",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:96677",
@@ -780,7 +888,16 @@ window.CINE_SEED = [
       "Netflix Top 10"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "Netflix Top 10 España series #2 (26/10–1/11/2026)"
+    "popularidad_fuente": "Netflix Top 10 España series #2 (26/10–1/11/2026)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/jgAZYiuRV37pCxmhx8NTdhE36RL.jpg",
+    "duracion": {
+      "minutos_episodio": 40,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/96677",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:333533",
@@ -809,7 +926,16 @@ window.CINE_SEED = [
       "Netflix Top 10"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "Netflix Top 10 España series #3 (26/10–1/11/2026)"
+    "popularidad_fuente": "Netflix Top 10 España series #3 (26/10–1/11/2026)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/3nJL65FgsUpmBEIMXc0kt0h5uay.jpg",
+    "duracion": {
+      "minutos_episodio": 59,
+      "temporadas": 1
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/333533",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:250923",
@@ -839,7 +965,16 @@ window.CINE_SEED = [
       "Netflix Top 10"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "Netflix Top 10 España series #6 (26/10–1/11/2026)"
+    "popularidad_fuente": "Netflix Top 10 España series #6 (26/10–1/11/2026)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/77sozyYenyY1JraK6YzLfDlTMpp.jpg",
+    "duracion": {
+      "minutos_episodio": 26,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/250923",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:285322",
@@ -869,7 +1004,16 @@ window.CINE_SEED = [
       "Netflix Top 10"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "Netflix Top 10 España series #7 (26/10–1/11/2026)"
+    "popularidad_fuente": "Netflix Top 10 España series #7 (26/10–1/11/2026)",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/cn0feYcDvVzVjUDoXa1O8sRgzz.jpg",
+    "duracion": {
+      "minutos_episodio": 47,
+      "temporadas": 1
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/285322",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:236235",
@@ -899,7 +1043,16 @@ window.CINE_SEED = [
       "JustWatch"
     ],
     "verificado_en": "2026-11-06",
-    "popularidad_fuente": "JustWatch ES (puesto ~19 diario series); líder ranking mensual series sep 2026"
+    "popularidad_fuente": "JustWatch ES (puesto ~19 diario series); líder ranking mensual series sep 2026",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/yG1wltFmkX5c5ocACKfpX0tp3SY.jpg",
+    "duracion": {
+      "minutos_episodio": 63,
+      "temporadas": 3
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/tv/236235",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1381071",
@@ -923,7 +1076,15 @@ window.CINE_SEED = [
       "SensaCine",
       "eCartelera"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/oqrYIDH4tvfEzPe1yqT4jzmAWHQ.jpg",
+    "duracion": {
+      "minutos": 135
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1381071",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1371661",
@@ -945,7 +1106,15 @@ window.CINE_SEED = [
       "TMDB",
       "SensaCine"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/rs4w35BjZU8L2CihVNIyGIrxU2W.jpg",
+    "duracion": {
+      "minutos": 102
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1371661",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1522071",
@@ -966,7 +1135,15 @@ window.CINE_SEED = [
       "TMDB",
       "SensaCine"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/dcms6atcKVzYPMWJwvltYkaq2zf.jpg",
+    "duracion": {
+      "minutos": 136
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1522071",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1241803",
@@ -989,7 +1166,15 @@ window.CINE_SEED = [
       "TMDB",
       "SensaCine"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/2IAY24dGrbGnafJ3ENXmCDTDvxg.jpg",
+    "duracion": {
+      "minutos": 178
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1241803",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1117898",
@@ -1015,7 +1200,15 @@ window.CINE_SEED = [
       "SensaCine",
       "Yelmo"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/9y9o686DsQg0KzPtERzcW7Cf8IE.jpg",
+    "duracion": {
+      "minutos": 108
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1117898",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1405002",
@@ -1037,7 +1230,16 @@ window.CINE_SEED = [
       "TMDB",
       "SensaCine"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": null,
+    "duracion": {
+      "minutos": 132
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1405002",
+      "verificado_en": "2026-11-06",
+      "nota": "por verificar"
+    }
   },
   {
     "id": "tmdb:656908",
@@ -1061,7 +1263,15 @@ window.CINE_SEED = [
       "SensaCine",
       "Yelmo"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/prbMZ3DPf8taS6JYQd6igPnm2mA.jpg",
+    "duracion": {
+      "minutos": 208
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/656908",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1422041",
@@ -1084,7 +1294,15 @@ window.CINE_SEED = [
       "SensaCine",
       "JustWatch"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/bDsmYvrzto7xrEwqDpLC3SPhn9A.jpg",
+    "duracion": {
+      "minutos": 159
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1422041",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1400940",
@@ -1107,7 +1325,15 @@ window.CINE_SEED = [
       "TMDB",
       "SensaCine"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/xSDoxv4pHvs4xZjvTb0Iqg1A6ro.jpg",
+    "duracion": {
+      "minutos": 109
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1400940",
+      "verificado_en": "2026-11-06"
+    }
   },
   {
     "id": "tmdb:1365224",
@@ -1129,6 +1355,15 @@ window.CINE_SEED = [
       "SensaCine",
       "Yelmo"
     ],
-    "verificado_en": "2026-11-06"
+    "verificado_en": "2026-11-06",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/s8Kp6nJa6HtsUoHXFxG2wrN7PAw.jpg",
+    "duracion": {
+      "minutos": null
+    },
+    "extras_info": {
+      "fuente": "https://www.themoviedb.org/movie/1365224",
+      "verificado_en": "2026-11-06",
+      "nota": "por verificar"
+    }
   }
 ];

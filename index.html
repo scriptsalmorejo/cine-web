@@ -6,82 +6,81 @@
   <meta name="description" content="Lista personal de películas y series en España, con catálogo verificado (TMDB + JustWatch)." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <title>Cine Web — Películas y series</title>
-  <link rel="stylesheet" href="styles.css?v=20261106d" />
+  <link rel="stylesheet" href="styles.css?v=20261106f" />
 </head>
 <body>
+  <a class="skip-link" href="#grid">Saltar al catálogo</a>
   <div class="app">
     <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">CW</div>
-        <div>
-          <h1>Cine Web</h1>
-          <p>Tu lista · catálogo ES (TMDB + JustWatch) · datos en este navegador</p>
-        </div>
+      <a class="brand" href="./" aria-label="Cine Web, inicio">
+        <span class="brand-mark" aria-hidden="true">c<span>•</span></span>
+        <div><h1>Cine Web<span class="brand-dot">.</span></h1><span class="brand-caption">TU UNIVERSO DE PELÍCULAS Y SERIES</span></div>
+      </a>
+      <div class="header-search" role="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+        <label class="sr-only" for="busqueda">Buscar título, género o notas</label>
+        <input class="search" id="busqueda" type="search" placeholder="¿Qué te apetece ver?" autocomplete="off" />
+        <kbd aria-hidden="true">/</kbd>
       </div>
-      <div class="top-actions">
-        <button type="button" class="btn btn-primary" id="btn-añadir">+ Añadir</button>
-        <button type="button" class="btn" id="btn-exportar">Exportar JSON</button>
-        <button type="button" class="btn" id="btn-importar">Importar JSON</button>
-        <input type="file" id="file-import" accept="application/json,.json" class="sr-only" />
-        <button type="button" class="btn" id="btn-reseedar" title="Quita todos los títulos de tu lista; quedan Sin marcar">Vaciar mi lista</button>
+      <div class="header-end">
+        <div class="stats" id="stats" aria-live="polite"></div>
+        <details class="library-menu">
+          <summary class="btn library-toggle" aria-label="Opciones de mi lista"><span aria-hidden="true">☰</span><span>Mi lista</span></summary>
+          <div class="top-actions">
+            <span class="menu-heading">Tu biblioteca personal</span>
+            <button type="button" class="btn btn-primary" id="btn-añadir">＋ Añadir título</button>
+            <button type="button" class="btn" id="btn-exportar">Exportar JSON</button>
+            <button type="button" class="btn" id="btn-importar">Importar JSON</button>
+            <input type="file" id="file-import" aria-label="Seleccionar archivo JSON para importar" accept="application/json,.json" class="sr-only" />
+            <button type="button" class="btn btn-danger" id="btn-reseedar" title="Quita todos los títulos de tu lista; quedan Sin marcar">Vaciar mi lista</button>
+            <p>Tu lista se guarda solo en este navegador.</p>
+          </div>
+        </details>
       </div>
     </header>
 
-    <div class="stats" id="stats" aria-live="polite"></div>
+    <main id="contenido">
+      <section class="intro" aria-labelledby="intro-title">
+        <div class="intro-copy">
+          <p class="eyebrow"><span></span> PELÍCULAS, SERIES Y MUCHO POR DESCUBRIR</p>
+          <h2 id="intro-title">Tu próxima<br />gran <em>historia.</em></h2>
+          <p class="intro-description">Encuentra qué ver y dónde verlo en España.<br class="desktop-break" /> Lo que te gusta, lo que te queda. Todo a tu ritmo.</p>
+          <a class="intro-link" href="#catalogo">Descubre el catálogo <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="intro-art" id="intro-art" aria-hidden="true"></div>
+        <span class="intro-footnote">ES <span aria-hidden="true">/</span> Tu cine, en un solo lugar</span>
+      </section>
 
-    <div class="toolbar" role="search">
-      <label class="sr-only" for="busqueda">Buscar</label>
-      <input class="search" id="busqueda" type="search" placeholder="Buscar título, género, notas…" autocomplete="off" />
+      <section class="collection-heading" id="catalogo" aria-labelledby="catalogo-title">
+        <div><p class="eyebrow">ELIGE TU PRÓXIMA SESIÓN</p><h2 id="catalogo-title">Todo el catálogo<span class="brand-dot">.</span></h2></div>
+        <div class="collection-counters" id="collection-counters" aria-live="polite"></div>
+      </section>
 
-      <label class="sr-only" for="filtro-estado">Estado</label>
-      <select class="select" id="filtro-estado">
-        <option value="todos">Todos los estados</option>
-        <option value="pendiente">Pendiente</option>
-        <option value="vista">Vista</option>
-        <option value="sin_marcar">Sin marcar</option>
-      </select>
-
-      <label class="sr-only" for="filtro-tipo">Tipo</label>
-      <select class="select" id="filtro-tipo">
-        <option value="todos">Películas y series</option>
-        <option value="pelicula">Películas</option>
-        <option value="serie">Series</option>
-      </select>
-
-      <label class="sr-only" for="filtro-plataforma">Plataforma</label>
-      <select class="select" id="filtro-plataforma">
-        <option value="todas">Todas las plataformas</option>
-      </select>
-
-      <label class="sr-only" for="filtro-genero">Género</label>
-      <select class="select" id="filtro-genero">
-        <option value="todos">Todos los géneros</option>
-      </select>
-
-      <label class="check-inline" for="filtro-favoritas">
-        <input type="checkbox" id="filtro-favoritas" />
-        Solo favoritas
-      </label>
-
-      <label class="check-inline" for="filtro-en-cines">
-        <input type="checkbox" id="filtro-en-cines" />
-        En cines
-      </label>
-
-      <label class="sr-only" for="filtro-orden">Orden</label>
-      <select class="select" id="filtro-orden">
-        <option value="anadido_desc">Más recientes primero</option>
-        <option value="anadido_asc">Más antiguos primero</option>
-        <option value="titulo_asc">Título A→Z</option>
-        <option value="titulo_desc">Título Z→A</option>
-        <option value="anio_desc">Año ↓</option>
-        <option value="anio_asc">Año ↑</option>
-        <option value="puntuacion_desc">Puntuación ↓</option>
-        <option value="puntuacion_asc">Puntuación ↑</option>
-      </select>
-    </div>
-
-    <main class="grid" id="grid" aria-live="polite"></main>
+      <nav class="toolbar" aria-label="Filtros del catálogo">
+        <div class="filter-scroll">
+          <label class="filter-control"><span class="sr-only">Estado</span><select class="select" id="filtro-estado">
+            <option value="todos">Todos los estados</option><option value="pendiente">Pendiente</option><option value="vista">Vista</option><option value="sin_marcar">Sin marcar</option>
+          </select></label>
+          <label class="filter-control"><span class="sr-only">Tipo</span><select class="select" id="filtro-tipo">
+            <option value="todos">Películas y series</option><option value="pelicula">Películas</option><option value="serie">Series</option>
+          </select></label>
+          <label class="filter-control"><span class="sr-only">Plataforma</span><select class="select" id="filtro-plataforma"><option value="todas">Todas las plataformas</option></select></label>
+          <label class="filter-control"><span class="sr-only">Género</span><select class="select" id="filtro-genero"><option value="todos">Todos los géneros</option></select></label>
+          <label class="check-inline" for="filtro-en-cines"><input type="checkbox" id="filtro-en-cines" /><span aria-hidden="true">▣</span> En cines</label>
+          <label class="check-inline" for="filtro-favoritas"><input type="checkbox" id="filtro-favoritas" /><span aria-hidden="true">★</span> Favoritas</label>
+        </div>
+      </nav>
+      <div class="results-bar">
+        <p id="resultados" role="status"></p>
+        <div class="results-actions"><button class="btn btn-ghost" id="btn-limpiar" type="button" hidden>Limpiar filtros</button>
+          <label class="sort-control"><span aria-hidden="true">↕</span><span class="sr-only">Ordenar títulos</span><select class="select" id="filtro-orden">
+            <option value="anadido_desc">Más recientes primero</option><option value="anadido_asc">Más antiguos primero</option><option value="titulo_asc">Título A→Z</option><option value="titulo_desc">Título Z→A</option><option value="anio_desc">Año ↓</option><option value="anio_asc">Año ↑</option><option value="puntuacion_desc">Puntuación ↓</option><option value="puntuacion_asc">Puntuación ↑</option>
+          </select></label>
+        </div>
+      </div>
+      <div class="grid" id="grid" aria-label="Películas y series"></div>
+      <footer class="site-footer"><a class="footer-brand" href="#">Cine Web<span class="brand-dot">.</span></a><p>Hecha para disfrutar del cine. Tu lista, siempre tuya.</p><span>Catálogo España · TMDB + JustWatch<br />La disponibilidad puede cambiar.</span></footer>
+    </main>
   </div>
 
   <div class="modal-backdrop" id="modal-form" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-form-title">
@@ -158,18 +157,18 @@
     </div>
   </div>
 
-  <div class="modal-backdrop" id="modal-detalle" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Ficha del título">
+  <div class="modal-backdrop" id="modal-detalle" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="detalle-title">
     <div class="modal modal-lg">
       <header>
-        <h2>Ficha</h2>
+        <h2 id="detalle-title">Ficha del título</h2>
         <button type="button" class="btn btn-ghost btn-sm" data-close="#modal-detalle" aria-label="Cerrar">✕</button>
       </header>
       <div class="content"></div>
     </div>
   </div>
 
-  <script src="seed.js?v=20261106d"></script>
-  <script src="catalogo.js?v=20261106d"></script>
-  <script src="app.js?v=20261106d"></script>
+  <script src="seed.js?v=20261106f"></script>
+  <script src="catalogo.js?v=20261106f"></script>
+  <script src="app.js?v=20261106f"></script>
 </body>
 </html>
