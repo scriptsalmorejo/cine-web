@@ -126,12 +126,29 @@ function plataformaCoincideFiltro(nombreEnLista, filtro) {
   return false;
 }
 
+const ORDENES = ["recientes", "titulo_asc", "cines_primero", "puntuacion_desc"];
+function normalizarOrden(orden) {
+  return ORDENES.includes(orden) ? orden : "recientes";
+}
+function normalizarMisPlataformas(plataformas) {
+  if (!Array.isArray(plataformas)) return [];
+  const values = plataformas.filter((p) => typeof p === "string")
+    .map(normalizarNombreSuscripcion)
+    .filter((p) => p && p.toLowerCase() !== "cine" && !esTiendaAlquilerCompra(p))
+    .map((p) => PLATAFORMAS_ES.find((name) => name.toLowerCase() === p.toLowerCase()) || "Otra");
+  return [...new Set(values)];
+}
+function actualizadoAhora(row) {
+  const previous = Date.parse(row?.actualizado_en || "");
+  return new Date(Math.max(Date.now(), Number.isFinite(previous) ? previous + 1 : 0)).toISOString();
+}
+
 /* ---------- Storage ---------- */
 const Storage = (() => {
   const KEY = "cine-web:v2";
 
   function empty() {
-    return { fichas: {}, lista: [], seedIds: [], migracion: null };
+    return { fichas: {}, lista: [], seedIds: [], migracion: null, misPlataformas: [], orden: "recientes" };
   }
 
   function load() {
@@ -146,6 +163,8 @@ const Storage = (() => {
         lista: data.lista.map((row) => normalizeListaItem(row)),
         seedIds: Array.isArray(data.seedIds) ? data.seedIds.map(String) : null,
         migracion: data.migracion || null,
+        misPlataformas: normalizarMisPlataformas(data.misPlataformas),
+        orden: normalizarOrden(data.orden),
       };
     } catch {
       return null;
@@ -171,6 +190,8 @@ const Storage = (() => {
         ),
         seedIds: Array.isArray(data.seedIds) ? data.seedIds.map(String) : [],
         migracion: data.migracion || null,
+        misPlataformas: normalizarMisPlataformas(data.misPlataformas),
+        orden: data.orden ? normalizarOrden(data.orden) : null,
       };
     }
     // Array plano legado → migrar a lista (+ fichas mínimas)
@@ -181,7 +202,7 @@ const Storage = (() => {
         fichas[item.id] = fichaFromLegacy(raw);
         return item;
       });
-      return { fichas, lista, seedIds: [], migracion: null };
+      return { fichas, lista, seedIds: [], migracion: null, misPlataformas: [], orden: null };
     }
     throw new Error("JSON no reconocido (se espera {fichas, lista} o un array)");
   }
@@ -220,13 +241,16 @@ const Storage = (() => {
           .filter((p) => p.nombre)
       : [];
 
+    const anadido = raw.anadido_en || raw.fechaAñadido || raw.fechaAnadido || new Date().toISOString();
+    const updated = Date.parse(raw.actualizado_en || anadido);
     return {
       id: String(raw.id || uid()),
       estado,
       favorita: Boolean(raw.favorita),
       puntuacion,
       notas: String(raw.notas || ""),
-      anadido_en: raw.anadido_en || raw.fechaAñadido || raw.fechaAnadido || new Date().toISOString(),
+      anadido_en: anadido,
+      actualizado_en: Number.isFinite(updated) ? new Date(updated).toISOString() : new Date().toISOString(),
       visto_en: raw.visto_en || raw.fechaVista || null,
       plataformas,
       temporada:
@@ -313,10 +337,13 @@ const state = {
     genero: "todos",
     favoritas: false,
     en_cines: false,
-    orden: "anadido_desc",
+    mis_plataformas: false,
+    orden: "recientes",
   },
   editId: null,
   seedReady: false,
+  scoreId: null,
+  detalleId: null,
 };
 
 function persist() {
@@ -398,68 +425,71 @@ function generosDisponibles() {
   return [...set].sort((a, b) => a.localeCompare(b, "es"));
 }
 
+function normalizarBusqueda(value) {
+  return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+/** Levenshtein acotado, sin dependencias ni cálculo sobre sinopsis largas. */
+function distanciaCorta(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return false;
+  let previous = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const current = [i];
+    for (let j = 1; j <= b.length; j++) current[j] = Math.min(
+      current[j - 1] + 1, previous[j] + 1, previous[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    if (Math.min(...current) > max) return false;
+    previous = current;
+  }
+  return previous[b.length] <= max;
+}
+function coincideTitulo(t, query) {
+  const q = normalizarBusqueda(query);
+  if (!q) return true;
+  return [t.titulo, t.titulo_original].some((title) => {
+    const normalized = normalizarBusqueda(title);
+    if (normalized.includes(q)) return true;
+    const words = normalized.split(" ");
+    return q.split(" ").every((word) => words.some((candidate) => {
+      if (candidate.startsWith(word)) return true;
+      const tolerance = word.length < 4 ? 0 : word.length < 7 ? 1 : 2;
+      return tolerance > 0 && (distanciaCorta(word, candidate, tolerance)
+        || distanciaCorta(word, candidate.slice(0, word.length), tolerance));
+    }));
+  });
+}
+function enMisPlataformas(t) {
+  const selected = state.db.misPlataformas || [];
+  const subscriptions = t.streaming_es?.length
+    ? snapshotPlataformasDesdeStreaming(t.streaming_es) : plataformasCanonicas(t.plataformas);
+  return subscriptions.some((p) => selected.includes(PLATAFORMAS_ES.includes(p.nombre) ? p.nombre : "Otra"));
+}
+function compararRecientes(a, b) {
+  return (Number(b.anio) || 0) - (Number(a.anio) || 0)
+    || String(b.estreno_es || "").localeCompare(String(a.estreno_es || ""))
+    || a.titulo.localeCompare(b.titulo, "es");
+}
 function filtrarYOrdenar() {
   const f = state.filtros;
-  const q = f.q.trim().toLowerCase();
-  let list = todosLosTitulos().filter((t) => {
+  const list = todosLosTitulos().filter((t) => {
     if (f.estado === "sin_marcar") {
       if (!t._sinMarcar) return false;
-    } else if (f.estado !== "todos") {
-      if (t._sinMarcar || t.estado !== f.estado) return false;
-    }
+    } else if (f.estado !== "todos" && (t._sinMarcar || t.estado !== f.estado)) return false;
     if (f.tipo !== "todos" && t.tipo !== f.tipo) return false;
     if (f.favoritas && (t._sinMarcar || !t.favorita)) return false;
     if (f.en_cines && !t.en_cines) return false;
-    if (f.plataforma !== "todas") {
-      const ok = (t.plataformas || []).some((p) =>
-        plataformaCoincideFiltro(p.nombre, f.plataforma)
-      );
-      if (!ok) return false;
-    }
+    if (f.mis_plataformas && !enMisPlataformas(t)) return false;
+    if (f.plataforma !== "todas" && !(t.plataformas || []).some((p) => plataformaCoincideFiltro(p.nombre, f.plataforma))) return false;
     if (f.genero !== "todos" && !(t.generos || []).includes(f.genero)) return false;
-    if (q) {
-      const blob = [
-        t.titulo,
-        t.titulo_original,
-        t.sinopsis,
-        t.notas,
-        (t.generos || []).join(" "),
-        (t.plataformas || []).map((p) => p.nombre).join(" "),
-      ]
-        .join(" ")
-        .toLowerCase();
-      if (!blob.includes(q)) return false;
-    }
-    return true;
+    return coincideTitulo(t, f.q);
   });
-
-  const unmarkedLast = (cmpFn) => (a, b) => {
-    const aU = a._sinMarcar ? 1 : 0;
-    const bU = b._sinMarcar ? 1 : 0;
-    if (aU !== bU) return aU - bU;
-    return cmpFn(a, b);
-  };
-
   const cmp = {
-    anadido_desc: unmarkedLast((a, b) =>
-      String(b.anadido_en || "").localeCompare(String(a.anadido_en || ""))
-    ),
-    anadido_asc: unmarkedLast((a, b) =>
-      String(a.anadido_en || "").localeCompare(String(b.anadido_en || ""))
-    ),
+    recientes: compararRecientes,
     titulo_asc: (a, b) => a.titulo.localeCompare(b.titulo, "es"),
-    titulo_desc: (a, b) => b.titulo.localeCompare(a.titulo, "es"),
-    anio_desc: (a, b) => (b.anio || 0) - (a.anio || 0),
-    anio_asc: (a, b) => (a.anio || 0) - (b.anio || 0),
-    puntuacion_desc: unmarkedLast(
-      (a, b) => (b.puntuacion || 0) - (a.puntuacion || 0)
-    ),
-    puntuacion_asc: unmarkedLast(
-      (a, b) => (a.puntuacion || 0) - (b.puntuacion || 0)
-    ),
+    cines_primero: (a, b) => Number(Boolean(b.en_cines)) - Number(Boolean(a.en_cines)) || compararRecientes(a, b),
+    puntuacion_desc: (a, b) => (b.puntuacion ?? -1) - (a.puntuacion ?? -1) || compararRecientes(a, b),
   };
-  list.sort(cmp[f.orden] || cmp.anadido_desc);
-  return list;
+  return list.sort(cmp[normalizarOrden(f.orden)]);
 }
 
 /* ---------- Seed ---------- */
@@ -518,6 +548,8 @@ function aplicarEstadoFresco() {
     // Marcar el catálogo semilla como ya «ofrecido» para no auto-añadir nada
     seedIds,
     migracion: MIGRACION_SIN_MARCAR,
+    misPlataformas: normalizarMisPlataformas(state.db.misPlataformas),
+    orden: normalizarOrden(state.db.orden || state.filtros.orden),
   };
   persist();
 }
@@ -585,6 +617,8 @@ async function ensureData() {
       lista: Array.isArray(loaded.lista) ? loaded.lista : [],
       seedIds: loaded.seedIds,
       migracion: loaded.migracion || null,
+      misPlataformas: loaded.misPlataformas,
+      orden: loaded.orden,
     };
     if (state.db.migracion !== MIGRACION_SIN_MARCAR) {
       migrarSinMarcar1(seed);
@@ -598,6 +632,7 @@ async function ensureData() {
   } else {
     aplicarEstadoFresco();
   }
+  state.filtros.orden = normalizarOrden(state.db.orden);
   state.seedReady = true;
 }
 
@@ -662,6 +697,7 @@ function addOrUpdateFromForm(data) {
     puntuacion: data.puntuacion,
     notas: data.notas,
     anadido_en: existing?.anadido_en || new Date().toISOString(),
+    actualizado_en: actualizadoAhora(existing),
     visto_en:
       data.estado === "vista"
         ? existing?.visto_en || new Date().toISOString()
@@ -677,6 +713,8 @@ function addOrUpdateFromForm(data) {
     state.db.lista.unshift(row);
   }
   persist();
+  if (row.estado === "vista" && existing?.estado !== "vista") mostrarPuntuacion(id);
+  else if (row.estado !== "vista" && state.scoreId === id) cerrarPuntuacion();
   return row;
 }
 
@@ -697,7 +735,7 @@ function addFichaToLista(id) {
  * Añade una ficha de Explorar a la lista con el estado elegido.
  * No toca otras entradas. favorita/puntuacion/notas vacíos; temporada según ficha.
  */
-function addFromExplorar(id, estado) {
+function addFromExplorar(id, estado, opciones = {}) {
   if (state.db.lista.some((x) => x.id === id)) {
     toast("Ya estaba en tu lista");
     return false;
@@ -718,7 +756,7 @@ function addFromExplorar(id, estado) {
   const row = Storage.normalizeListaItem({
     id: ficha.id,
     estado: esVista ? "vista" : "pendiente",
-    favorita: false,
+    favorita: Boolean(opciones.favorita),
     puntuacion: null,
     notas: "",
     anadido_en: now,
@@ -728,7 +766,8 @@ function addFromExplorar(id, estado) {
   });
   state.db.lista.unshift(row);
   persist();
-  toast(esVista ? "Añadida como vista" : "Añadida a pendientes");
+  toast(opciones.favorita ? "Añadida a pendientes y favoritas" : esVista ? "Añadida como vista" : "Añadida a pendientes");
+  if (esVista) mostrarPuntuacion(id);
   return true;
 }
 
@@ -745,6 +784,7 @@ function getMergedOrCatalog(id) {
 }
 
 function borrarDeLista(id) {
+  if (state.scoreId === id) cerrarPuntuacion();
   state.db.lista = state.db.lista.filter((t) => t.id !== id);
   persist();
 }
@@ -755,18 +795,65 @@ function toggleEstado(id) {
   if (t.estado === "vista") {
     t.estado = "pendiente";
     t.visto_en = null;
+    if (state.scoreId === id) cerrarPuntuacion();
   } else {
     t.estado = "vista";
     t.visto_en = new Date().toISOString();
+    mostrarPuntuacion(id);
   }
+  t.actualizado_en = actualizadoAhora(t);
   persist();
 }
 
 function toggleFavorita(id) {
   const t = state.db.lista.find((x) => x.id === id);
-  if (!t) return;
+  if (!t) return addFromExplorar(id, "pendiente", { favorita: true });
   t.favorita = !t.favorita;
+  t.actualizado_en = actualizadoAhora(t);
   persist();
+}
+
+function mostrarPuntuacion(id) {
+  const t = getMerged(id);
+  if (!t || t.estado !== "vista") return;
+  state.scoreId = id;
+  $("#score-name").textContent = t.titulo;
+  $("#score-values").innerHTML = Array.from({ length: 10 }, (_, i) => `<button type="button" class="btn" data-score="${i + 1}" aria-label="Puntuar ${escapeHtml(t.titulo)} con ${i + 1} sobre 10" aria-pressed="${t.puntuacion === i + 1}">${i + 1}</button>`).join("");
+  $("#score-prompt").hidden = false;
+  colocarPuntuacion();
+  $("#score-announcement").textContent = `Marcada como vista: ${t.titulo}. Puedes puntuar de 1 a 10 u omitir la puntuación.`;
+}
+function colocarPuntuacion() {
+  const parent = $(".modal-backdrop.open .modal") || document.body;
+  parent.appendChild($("#score-prompt"));
+}
+function cerrarPuntuacion() {
+  const prompt = $("#score-prompt");
+  const restore = prompt.contains(document.activeElement);
+  const id = state.scoreId;
+  prompt.hidden = true;
+  state.scoreId = null;
+  if (restore) {
+    const modal = $(".modal-backdrop.open");
+    const target = modal ? modal.querySelector("[data-close]")
+      : $$(".card").find((card) => card.dataset.id === id)?.querySelector('[data-action="estado-vista"]');
+    target?.focus({ preventScroll: true });
+  }
+}
+function guardarPuntuacion(value) {
+  const row = state.db.lista.find((t) => t.id === state.scoreId);
+  if (!row || row.estado !== "vista" || !Number.isInteger(value) || value < 1 || value > 10) return;
+  row.puntuacion = value;
+  row.actualizado_en = actualizadoAhora(row);
+  persist();
+  cerrarPuntuacion();
+  renderAll();
+  if ($("#modal-detalle").classList.contains("open") && state.detalleId === row.id) openDetalle(getMerged(row.id));
+  toast(`Puntuación guardada: ${value}/10`);
+}
+function abrirMisPlataformas() {
+  $("#platform-choices").innerHTML = [...PLATAFORMAS_ES, "Otra"].map((p) => `<label class="platform-choice"><input type="checkbox" name="mis-plataformas" value="${escapeHtml(p)}" ${(state.db.misPlataformas || []).includes(p) ? "checked" : ""} /><span>${escapeHtml(p)}</span></label>`).join("");
+  openModal("#modal-plataformas");
 }
 
 /* ---------- DOM ---------- */
@@ -850,9 +937,15 @@ function renderHero() {
 
 function renderFilterState(count) {
   const f = state.filtros;
-  const active = f.q || f.estado !== "todos" || f.tipo !== "todos" || f.plataforma !== "todas" || f.genero !== "todos" || f.favoritas || f.en_cines;
+  const active = f.q || f.estado !== "todos" || f.tipo !== "todos" || f.plataforma !== "todas" || f.genero !== "todos" || f.favoritas || f.en_cines || f.mis_plataformas;
   $("#resultados").innerHTML = `<strong>${count}</strong> ${count === 1 ? "título" : "títulos"}${active ? " encontrados" : " para descubrir"}`;
   $("#btn-limpiar").hidden = !active;
+  const all = todosLosTitulos();
+  $("#count-en-cines").textContent = all.filter((t) => t.en_cines).length;
+  $("#count-favoritas").textContent = all.filter((t) => t.favorita).length;
+  $("#count-mis-plataformas").textContent = all.filter(enMisPlataformas).length;
+  $("#mis-plataformas-total").textContent = (state.db.misPlataformas || []).length;
+  $("#filtro-mis-plataformas").checked = f.mis_plataformas;
   ["estado", "tipo", "plataforma", "genero"].forEach((key) => {
     const select = $("#filtro-" + key);
     select.closest(".filter-control").classList.toggle("is-active", select.value !== (key === "plataforma" ? "todas" : "todos"));
@@ -860,6 +953,7 @@ function renderFilterState(count) {
 }
 
 function renderFiltrosOpciones() {
+  $("#filtro-orden").value = state.filtros.orden;
   const platSel = $("#filtro-plataforma");
   const genSel = $("#filtro-genero");
   const plats = plataformasParaFiltro();
@@ -891,7 +985,7 @@ function renderGrid() {
   const focusAction = focused ? document.activeElement.dataset.action : null;
   renderFilterState(list.length);
   if (!list.length) {
-    grid.innerHTML = `<div class="empty"><strong>Ningún título por aquí… todavía.</strong>No hay títulos con estos filtros. Prueba otra búsqueda o pulsa «Limpiar filtros».</div>`;
+    grid.innerHTML = `<div class="empty"><strong>Ningún título por aquí… todavía.</strong>${state.filtros.mis_plataformas && !state.db.misPlataformas.length ? 'Elige tus suscripciones para descubrir qué puedes ver. <button type="button" class="btn" data-open-platforms>Elegir mis plataformas</button>' : 'No hay títulos con estos filtros. Prueba otra búsqueda o pulsa «Limpiar filtros».'}</div>`;
     return;
   }
   grid.innerHTML = list.map((t) => {
@@ -912,7 +1006,7 @@ function renderGrid() {
             <span class="badge badge-${sinMarcar ? "sin-marcar" : t.estado}">${escapeHtml(labelEstado(t.estado))}</span>
             ${t.en_cines ? `<span class="badge badge-en-cines" title="${t.estreno_es ? 'Estreno ES: ' + escapeHtml(formatFechaDia(t.estreno_es)) : 'En cines'}">▣ En cines</span>` : ""}
           </div>
-          <button type="button" class="fav-btn ${t.favorita ? "on" : ""}" data-action="fav" aria-pressed="${t.favorita}" aria-label="${sinMarcar ? 'Marca Pendiente o Vista para guardar como favorita: ' : t.favorita ? 'Quitar de favoritas: ' : 'Añadir a favoritas: '}${title}" title="${sinMarcar ? 'Marca Pendiente o Vista antes de guardar favoritas' : t.favorita ? 'Quitar de favoritas' : 'Añadir a favoritas'}" ${sinMarcar ? "disabled" : ""}>★</button>
+          <button type="button" class="fav-btn ${t.favorita ? "on" : ""}" data-action="fav" aria-pressed="${t.favorita}" aria-label="${sinMarcar ? 'Añadir a pendientes y favoritas: ' : t.favorita ? 'Quitar de favoritas: ' : 'Añadir a favoritas: '}${title}" title="${sinMarcar ? 'Añadir a pendientes y favoritas' : t.favorita ? 'Quitar de favoritas' : 'Añadir a favoritas'}">★</button>
         </div>
         <div class="card-body">
           <h3 class="card-title"><button class="title-button" type="button" data-action="detalle">${title}</button></h3>
@@ -939,14 +1033,17 @@ function renderAll() {
   renderGrid();
 }
 
+let searchTimer;
 const modalFocus = new Map();
 function openModal(id) {
+  $$(".modal-backdrop.open").forEach((open) => { if (open !== $(id)) closeModal("#" + open.id); });
   const modal = $(id);
   if (!modal.classList.contains("open")) modalFocus.set(id, document.activeElement);
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   $(".app").inert = true;
   document.body.style.overflow = "hidden";
+  if (!$("#score-prompt").hidden) colocarPuntuacion();
   modal.querySelector("button, input, select, textarea, a[href]")?.focus({ preventScroll: true });
 }
 function closeModal(id) {
@@ -954,11 +1051,13 @@ function closeModal(id) {
   if (!modal.classList.contains("open")) return;
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
+  colocarPuntuacion();
   if (!$(".modal-backdrop.open")) {
     $(".app").inert = false;
     document.body.style.overflow = "";
     const previous = modalFocus.get(id);
-    if (previous?.isConnected) previous.focus({ preventScroll: true });
+    if (previous?.isConnected && previous.getClientRects().length) previous.focus({ preventScroll: true });
+    else if (previous?.closest(".library-menu")) $(".library-toggle").focus({ preventScroll: true });
     else $("#busqueda").focus({ preventScroll: true });
   }
 }
@@ -1119,6 +1218,7 @@ function detailHeroHtml(t, meta) {
 }
 
 function openDetalle(t) {
+  state.detalleId = t.id;
   const sinMarcar =
     Boolean(t._sinMarcar) || !state.db.lista.some((x) => x.id === t.id);
   const grouped = agruparStreamingParaFicha(t.streaming_es || []);
@@ -1161,7 +1261,8 @@ function openDetalle(t) {
 
   const actions = sinMarcar
     ? `<button class="btn btn-primary" data-det="add-pendiente" data-id="${escapeHtml(t.id)}">Pendiente</button>
-          <button class="btn" data-det="add-vista" data-id="${escapeHtml(t.id)}">Vista</button>`
+          <button class="btn" data-det="add-vista" data-id="${escapeHtml(t.id)}">Vista</button>
+          <button class="btn" data-det="fav" data-id="${escapeHtml(t.id)}">★ Añadir a favoritas y pendientes</button>`
     : `<button class="btn btn-primary" data-det="editar" data-id="${escapeHtml(t.id)}">Editar</button>
           <button class="btn" data-det="fav" data-id="${escapeHtml(t.id)}">${t.favorita ? "Quitar favorita" : "Marcar favorita"}</button>
           <button class="btn" data-det="toggle" data-id="${escapeHtml(t.id)}">${t.estado === "vista" ? "Marcar pendiente" : "Marcar vista"}</button>
@@ -1228,7 +1329,7 @@ function openDetalle(t) {
         <div class="card-actions" style="margin-top:1rem">
           ${actions}
         </div>
-        ${sinMarcar ? '<p class="meta">Elige Pendiente o Vista para guardar puntuación, notas y favoritas en tu lista.</p>' : ''}
+        ${sinMarcar ? '<p class="meta">Pendiente, Vista o ★ añaden el título a tu lista. Puedes editar después tu puntuación y tus notas.</p>' : ''}
       </div>
     </div>
   `;
@@ -1253,17 +1354,32 @@ function bindEvents() {
   syncHeaderHeight();
 
   $("#btn-limpiar").addEventListener("click", () => {
-    Object.assign(state.filtros, { q: "", estado: "todos", tipo: "todos", plataforma: "todas", genero: "todos", favoritas: false, en_cines: false });
+    clearTimeout(searchTimer);
+    Object.assign(state.filtros, { q: "", estado: "todos", tipo: "todos", plataforma: "todas", genero: "todos", favoritas: false, en_cines: false, mis_plataformas: false });
     $("#busqueda").value = "";
     $("#filtro-estado").value = "todos";
     $("#filtro-tipo").value = "todos";
     renderAll();
   });
   document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-open-platforms]")) abrirMisPlataformas();
     if (!e.target.closest(".library-menu")) $(".library-menu").open = false;
     if (e.target.closest(".top-actions button")) $(".library-menu").open = false;
   });
   $("#btn-añadir").addEventListener("click", () => openForm(null));
+  $("#btn-mis-plataformas").addEventListener("click", abrirMisPlataformas);
+  $("#form-mis-plataformas").addEventListener("submit", (e) => {
+    e.preventDefault();
+    state.db.misPlataformas = normalizarMisPlataformas($$("#platform-choices input:checked").map((input) => input.value));
+    persist();
+    closeModal("#modal-plataformas");
+    renderAll();
+    toast("Tus plataformas se han guardado");
+  });
+  $("#modal-plataformas").addEventListener("click", (e) => { if (e.target === e.currentTarget) closeModal("#modal-plataformas"); });
+  $("#filtro-mis-plataformas").addEventListener("change", (e) => { state.filtros.mis_plataformas = e.target.checked; renderGrid(); });
+  $("#score-skip").addEventListener("click", cerrarPuntuacion);
+  $("#score-values").addEventListener("click", (e) => { const button = e.target.closest("[data-score]"); if (button) guardarPuntuacion(Number(button.dataset.score)); });
 
   $("#btn-exportar").addEventListener("click", () => {
     const blob = new Blob([Storage.exportJSON(state.db)], { type: "application/json" });
@@ -1291,6 +1407,8 @@ function bindEvents() {
         const offered = new Set([...(state.db.seedIds || []), ...imported.seedIds].map(String));
         state.db.seedIds = [...offered];
       }
+      state.db.misPlataformas = normalizarMisPlataformas([...(state.db.misPlataformas || []), ...imported.misPlataformas]);
+      if (imported.orden) state.db.orden = state.filtros.orden = imported.orden;
       persist();
       renderAll();
       toast(`Importados ${imported.lista.length} títulos`);
@@ -1310,14 +1428,18 @@ function bindEvents() {
     const catalogExtra = await loadCatalogoArray();
     aplicarCatalogoUnion(seed, catalogExtra);
     aplicarEstadoFresco();
+    cerrarPuntuacion();
     renderAll();
     toast("Lista vaciada");
   });
 
-  $("#busqueda").addEventListener("input", (e) => {
+  const buscar = (e) => {
+    clearTimeout(searchTimer);
     state.filtros.q = e.target.value;
-    renderGrid();
-  });
+    if (!e.isComposing) searchTimer = setTimeout(renderGrid, 180);
+  };
+  $("#busqueda").addEventListener("input", buscar);
+  $("#busqueda").addEventListener("compositionend", buscar);
   ["filtro-estado", "filtro-tipo", "filtro-plataforma", "filtro-genero", "filtro-orden"].forEach((id) => {
     $("#" + id).addEventListener("change", (e) => {
       const key = {
@@ -1328,6 +1450,7 @@ function bindEvents() {
         "filtro-orden": "orden",
       }[id];
       state.filtros[key] = e.target.value;
+      if (key === "orden") { state.db.orden = normalizarOrden(e.target.value); persist(); }
       renderGrid();
     });
   });
@@ -1462,6 +1585,8 @@ function bindEvents() {
     }
     if (e.key === "Escape") {
       $(".library-menu").open = false;
+      cerrarPuntuacion();
+      closeModal("#modal-plataformas");
       closeModal("#modal-form");
       closeModal("#modal-detalle");
     }
@@ -1469,6 +1594,9 @@ function bindEvents() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Una preferencia elegida mientras llega el catálogo no debe guardar una DB vacía.
+  const cached = Storage.load();
+  if (cached) { state.db = cached; state.filtros.orden = cached.orden; }
   bindEvents();
   try {
     await ensureData();

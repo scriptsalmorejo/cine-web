@@ -6,7 +6,7 @@
   <meta name="description" content="Lista personal de películas y series en España, con catálogo verificado (TMDB + JustWatch)." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <title>Cine Web — Películas y series</title>
-  <link rel="stylesheet" href="styles.css?v=20261106g" />
+  <link rel="stylesheet" href="styles.css?v=20261107a" />
 </head>
 <body>
   <a class="skip-link" href="#grid">Saltar al catálogo</a>
@@ -18,8 +18,8 @@
       </a>
       <div class="header-search" role="search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
-        <label class="sr-only" for="busqueda">Buscar título, género o notas</label>
-        <input class="search" id="busqueda" type="search" placeholder="¿Qué te apetece ver?" autocomplete="off" />
+        <label class="sr-only" for="busqueda">Buscar películas y series por título</label>
+        <input class="search" id="busqueda" type="search" placeholder="Busca por título, incluso con alguna errata…" autocomplete="off" />
         <kbd aria-hidden="true">/</kbd>
       </div>
       <div class="header-end">
@@ -28,6 +28,7 @@
           <summary class="btn library-toggle" aria-label="Opciones de mi lista"><span aria-hidden="true">☰</span><span>Mi lista</span></summary>
           <div class="top-actions">
             <span class="menu-heading">Tu biblioteca personal</span>
+            <button type="button" class="btn" id="btn-mis-plataformas">Mis plataformas <span id="mis-plataformas-total">0</span></button>
             <button type="button" class="btn btn-primary" id="btn-añadir">＋ Añadir título</button>
             <button type="button" class="btn" id="btn-exportar">Exportar JSON</button>
             <button type="button" class="btn" id="btn-importar">Importar JSON</button>
@@ -66,15 +67,16 @@
           </select></label>
           <label class="filter-control"><span class="sr-only">Plataforma</span><select class="select" id="filtro-plataforma"><option value="todas">Todas las plataformas</option></select></label>
           <label class="filter-control"><span class="sr-only">Género</span><select class="select" id="filtro-genero"><option value="todos">Todos los géneros</option></select></label>
-          <label class="check-inline" for="filtro-en-cines"><input type="checkbox" id="filtro-en-cines" /><span aria-hidden="true">▣</span> En cines</label>
-          <label class="check-inline" for="filtro-favoritas"><input type="checkbox" id="filtro-favoritas" /><span aria-hidden="true">★</span> Favoritas</label>
+          <label class="check-inline" for="filtro-mis-plataformas"><input type="checkbox" id="filtro-mis-plataformas" /><span aria-hidden="true">◉</span> En mis plataformas <span class="chip-count" id="count-mis-plataformas">0</span></label>
+          <label class="check-inline" for="filtro-en-cines"><input type="checkbox" id="filtro-en-cines" /><span aria-hidden="true">▣</span> En cines <span class="chip-count" id="count-en-cines">0</span></label>
+          <label class="check-inline" for="filtro-favoritas"><input type="checkbox" id="filtro-favoritas" /><span aria-hidden="true">★</span> Favoritas <span class="chip-count" id="count-favoritas">0</span></label>
         </div>
       </nav>
       <div class="results-bar">
         <p id="resultados" role="status"></p>
         <div class="results-actions"><button class="btn btn-ghost" id="btn-limpiar" type="button" hidden>Limpiar filtros</button>
           <label class="sort-control"><span aria-hidden="true">↕</span><span class="sr-only">Ordenar títulos</span><select class="select" id="filtro-orden">
-            <option value="anadido_desc">Más recientes primero</option><option value="anadido_asc">Más antiguos primero</option><option value="titulo_asc">Título A→Z</option><option value="titulo_desc">Título Z→A</option><option value="anio_desc">Año ↓</option><option value="anio_asc">Año ↑</option><option value="puntuacion_desc">Puntuación ↓</option><option value="puntuacion_asc">Puntuación ↑</option>
+            <option value="recientes">Más recientes</option><option value="titulo_asc">A–Z</option><option value="cines_primero">En cines primero</option><option value="puntuacion_desc">Mejor puntuadas</option>
           </select></label>
         </div>
       </div>
@@ -82,6 +84,26 @@
       <footer class="site-footer"><a class="footer-brand" href="#">Cine Web<span class="brand-dot">.</span></a><p>Hecha para disfrutar del cine. Tu lista, siempre tuya.</p><span>Catálogo España · TMDB + JustWatch<br />La disponibilidad puede cambiar.</span></footer>
     </main>
   </div>
+
+  <div class="modal-backdrop" id="modal-plataformas" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-plataformas-title">
+    <div class="modal modal-platforms">
+      <header><h2 id="modal-plataformas-title">Mis plataformas</h2><button type="button" class="btn btn-ghost btn-sm" data-close="#modal-plataformas" aria-label="Cerrar Mis plataformas">✕</button></header>
+      <form id="form-mis-plataformas">
+        <div class="content"><p class="platforms-description" id="platforms-description">Elige las suscripciones que pagas. El filtro «En mis plataformas» no incluye alquileres ni compras.</p>
+          <fieldset class="platform-choices" id="platform-choices" aria-describedby="platforms-description"><legend class="sr-only">Tus servicios de suscripción</legend></fieldset>
+          <p class="meta">«Otra» agrupa otras suscripciones; nunca las tiendas de alquiler o compra. Se guarda solo en este navegador.</p>
+        </div>
+        <footer><button type="button" class="btn" data-close="#modal-plataformas">Cancelar</button><button type="submit" class="btn btn-primary">Guardar plataformas</button></footer>
+      </form>
+    </div>
+  </div>
+
+  <aside class="score-prompt" id="score-prompt" aria-labelledby="score-title" hidden>
+    <div class="score-heading"><div><h2 id="score-title">¿Qué te ha parecido?</h2><p id="score-name"></p></div><button type="button" class="btn btn-ghost" id="score-skip" aria-label="Omitir puntuación">Omitir</button></div>
+    <div class="score-values" id="score-values" role="group" aria-label="Puntuación de 1 a 10"></div>
+    <p class="meta">Puedes puntuar ahora o seguir explorando.</p>
+  </aside>
+  <div class="sr-only" id="score-announcement" role="status"></div>
 
   <div class="modal-backdrop" id="modal-form" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-form-title">
     <div class="modal">
@@ -167,8 +189,8 @@
     </div>
   </div>
 
-  <script src="seed.js?v=20261106g"></script>
-  <script src="catalogo.js?v=20261106g"></script>
-  <script src="app.js?v=20261106g"></script>
+  <script src="seed.js?v=20261107a"></script>
+  <script src="catalogo.js?v=20261107a"></script>
+  <script src="app.js?v=20261107a"></script>
 </body>
 </html>
