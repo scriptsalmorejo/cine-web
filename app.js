@@ -91,9 +91,10 @@ function agruparStreamingParaFicha(streamingEs) {
     const section = s.tipo === "subscription" && !esTiendaAlquilerCompra(s.plataforma)
       ? "suscripcion" : ["rent", "buy"].includes(s.tipo) ? "alquilerCompra" : null;
     if (!section) continue;
-    const nota = /^Max Amazon Channel$/i.test(String(s.plataforma).trim())
+    const origen = String(s.plataforma_original || s.plataforma).trim();
+    const nota = /^Max Amazon Channel$/i.test(origen)
       ? "vía Amazon Channel"
-      : /Ficci[oó]n Total/i.test(String(s.plataforma)) ? "Ficción Total" : "";
+      : /Ficci[oó]n Total/i.test(origen) ? "Ficción Total" : "";
     const verificacion = String(s.estado || "").toLowerCase() === "verificado" ? "verificado" : "por verificar";
     if (!groups[section].has(nombre)) groups[section].set(nombre, { nombre, ofertas: [] });
     const group = groups[section].get(nombre);
@@ -508,11 +509,11 @@ function notasDefaultSeed(id) {
   return new Set([""]);
 }
 
-/** Estado inicial: lista vacía; las 53 fichas aparecen como Sin marcar. */
+/** Estado inicial: catálogo completo Sin marcar, sin altas automáticas en lista. */
 function aplicarEstadoFresco() {
   const seedIds = state.catalogo.map((f) => f.id);
   state.db = {
-    fichas: {},
+    fichas: Object.fromEntries(state.catalogo.map((ficha) => [ficha.id, { ...ficha }])),
     lista: [],
     // Marcar el catálogo semilla como ya «ofrecido» para no auto-añadir nada
     seedIds,
@@ -556,10 +557,11 @@ function migrarSinMarcar1(seedArr) {
 /** Refresca ficha + snapshot de plataformas para ids ya en lista (sin tocar campos personales). */
 function syncFichasListaDesdeCatalogo() {
   if (!state.db.fichas) state.db.fichas = {};
-  // Incorporar los extras también a fichas guardadas que ya no están en lista.
-  // Nunca mezclar metadatos del catálogo con los campos personales de lista.
+  // Incorporar nuevas fichas al catálogo guardado, nunca a la lista personal.
+  // Actualizar extras de fichas existentes sin sobrescribir otros datos manuales.
   for (const ficha of state.catalogo) {
-    if (state.db.fichas[ficha.id]) Object.assign(state.db.fichas[ficha.id], {
+    if (!state.db.fichas[ficha.id]) state.db.fichas[ficha.id] = { ...ficha };
+    else Object.assign(state.db.fichas[ficha.id], {
       backdrop: ficha.backdrop, duracion: ficha.duracion, extras_info: ficha.extras_info,
     });
   }

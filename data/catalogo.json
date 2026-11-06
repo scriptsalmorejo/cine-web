@@ -1575,5 +1575,1478 @@
       "fuente": "https://www.themoviedb.org/tv/106379",
       "verificado_en": "2026-11-06"
     }
+  },
+  {
+    "id": "tmdb:1058424",
+    "tipo": "pelicula",
+    "titulo": "Hope",
+    "titulo_original": "호프",
+    "anio": 2026,
+    "generos": [
+      "Ciencia ficción",
+      "Misterio",
+      "Acción"
+    ],
+    "sinopsis": "Los refuerzos se han desviado para combatir los incendios forestales y se han cortado todas las comunicaciones. El jefe del puesto policial de Hope, Bum-seok, y la agente Sung-ae luchan por defender un pueblo de ancianos, mientras que en las montañas, Sung-ki y los lugareños que se han lanzado a la búsqueda de la bestia se ven, por el contrario, acosados por ella. Lo que comienza como ignorancia siembra la semilla del desastre, que se intensifica a través del conflicto humano hasta convertirse en una tragedia de proporciones cósmicas.",
+    "poster": "https://image.tmdb.org/t/p/w500/lkWqvj24NG3vEgu19ZQ9erG3Vj7.jpg",
+    "trailer": "https://www.youtube.com/watch?v=ODnHr2Emnf0",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-10-30",
+    "nota": "En cines en España; streaming por verificar",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/j96rurZqmBjyY37Fncl3IB0qJNe.jpg",
+    "duracion": {
+      "minutos": 157
+    },
+    "fuentes": [
+      "TMDB",
+      "SensaCine",
+      "eCartelera"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1477104",
+    "tipo": "pelicula",
+    "titulo": "La oveja Shaun: Misión calabaza",
+    "titulo_original": "Shaun the Sheep: The Beast of Mossy Bottom",
+    "anio": 2026,
+    "generos": [
+      "Animación",
+      "Ciencia ficción",
+      "Comedia",
+      "Familia"
+    ],
+    "sinopsis": "En la víspera de Halloween en la granja Mossy Bottom, la emoción se convierte en consternación cuando el torpe granjero arruina el huerto de calabazas. Shaun intenta arreglarlo mediante experimentos científicos, pero las cosas se tuercen cuando aparece una bestia salvaje en el bosque.",
+    "poster": "https://image.tmdb.org/t/p/w500/ajiSFBxo1h0MNbu7q9I5aSVHUgE.jpg",
+    "trailer": "https://www.youtube.com/watch?v=UZ46Smi6mOw",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-10-30",
+    "nota": "En cines en España; streaming por verificar",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/mG8tVv1RPAKnARWxKTND5dRgMpw.jpg",
+    "duracion": {
+      "minutos": 81
+    },
+    "fuentes": [
+      "TMDB",
+      "SensaCine",
+      "eCartelera"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1689329",
+    "tipo": "pelicula",
+    "titulo": "Leones en invierno",
+    "anio": 2026,
+    "generos": [
+      "Acción",
+      "Suspense"
+    ],
+    "sinopsis": "La historia comienza con un crimen trágico cuyo autor intenta borrar sus huellas, incluida su relación con personas del poder y del crimen organizado. El padre de la víctima —su hija—, que creía haber dejado atrás una vida marcada por la violencia, decide buscar justicia por su cuenta, cruzando límites de los que no hay vuelta atrás. Si hay algo más peligroso que un padre que defiende a sus hijos, es un padre que ya no tiene hijos a los que defender.",
+    "poster": "https://image.tmdb.org/t/p/w500/ozr5OyKt1whnfuLei2viZsS38Kp.jpg",
+    "trailer": null,
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-10-23",
+    "nota": "En cines en España; streaming por verificar; backdrop por verificar",
+    "backdrop": null,
+    "duracion": {
+      "minutos": 117
+    },
+    "fuentes": [
+      "TMDB",
+      "SensaCine",
+      "eCartelera"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:791523",
+    "tipo": "pelicula",
+    "titulo": "Wildwood: El Bosque Salvaje",
+    "titulo_original": "Wildwood",
+    "anio": 2026,
+    "generos": [
+      "Animación",
+      "Aventura",
+      "Fantasía"
+    ],
+    "sinopsis": "Prue y su compañero de clase Curtis se ven arrastrados a un bosque mágico poblado por criaturas encantadas, aliados leales y adversarios formidables, mientras emprenden una misión desesperada para rescatar al hermano bebé de Prue —secuestrado por una bandada de cuervos liderada por una misteriosa mujer llamada Alexandra—.",
+    "poster": "https://image.tmdb.org/t/p/w500/sJ1uZ4DKsjs2iqLtCX46TifxqoE.jpg",
+    "trailer": "https://www.youtube.com/watch?v=qWX1ba0f-Qg",
+    "streaming_es": [],
+    "en_cines": true,
+    "estreno_es": "2026-10-23",
+    "nota": "En cines en España; streaming por verificar",
+    "backdrop": "https://image.tmdb.org/t/p/w1280/sl5NJ1vtyhP9Vr88bB4blULsJYp.jpg",
+    "duracion": {
+      "minutos": 132
+    },
+    "fuentes": [
+      "TMDB",
+      "SensaCine",
+      "eCartelera"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:155",
+    "tipo": "pelicula",
+    "titulo": "El caballero oscuro",
+    "titulo_original": "The Dark Knight",
+    "anio": 2008,
+    "generos": [
+      "Acción",
+      "Suspense",
+      "Crimen"
+    ],
+    "sinopsis": "Batman/Bruce Wayne regresa para continuar su guerra contra el crimen. Con la ayuda del teniente Jim Gordon y del Fiscal del Distrito Harvey Dent, Batman se propone destruir el crimen organizado en la ciudad de Gotham. El triunvirato demuestra su eficacia, pero, de repente, aparece Joker, un nuevo criminal que desencadena el caos y tiene aterrados a los ciudadanos.",
+    "poster": "https://image.tmdb.org/t/p/w500/8QDQExnfNFOtabLDKqfDQuHDsIg.jpg",
+    "trailer": "https://www.youtube.com/watch?v=kmJLuwP3MbY",
+    "streaming_es": [
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Max Amazon Channel"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Movistar Plus+ Ficción Total"
+      },
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/el-caballero-oscuro",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/cfT29Im5VDvjE0RpyKOSdCKZal7.jpg",
+    "duracion": {
+      "minutos": 152
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:129",
+    "tipo": "pelicula",
+    "titulo": "El viaje de Chihiro",
+    "titulo_original": "千と千尋の神隠し",
+    "anio": 2001,
+    "generos": [
+      "Animación",
+      "Familia",
+      "Fantasía"
+    ],
+    "sinopsis": "Durante el traslado de su familia a los suburbios, una niña de 10 años de edad deambula por un mundo gobernado por dioses, brujas y espíritus, y donde los humanos se convierten en bestias.",
+    "poster": "https://image.tmdb.org/t/p/w500/2RcxjDykOssx4SfqshewyI9vfSl.jpg",
+    "trailer": "https://www.youtube.com/watch?v=5Fgq4Osh6XQ",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/pelicula/el-viaje-de-chihiro",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/el-viaje-de-chihiro",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/m4TUa2ciEWSlk37rOsjiSIvZDXE.jpg",
+    "duracion": {
+      "minutos": 122
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:313369",
+    "tipo": "pelicula",
+    "titulo": "La ciudad de las estrellas (La La Land)",
+    "titulo_original": "La La Land",
+    "anio": 2016,
+    "generos": [
+      "Comedia",
+      "Drama",
+      "Romance"
+    ],
+    "sinopsis": "Mia, una joven aspirante a actriz que compagina los castings con su trabajo de camarera, y Sebastian, un pianista de jazz que se gana la vida tocando en sórdidos tugurios, se enamoran. Pero la gran ambición por llegar a la cima en sus carreras artísticas amenaza con separarlos.",
+    "poster": "https://image.tmdb.org/t/p/w500/7pFsAaJmiOppVHcldBzg8JKBHwe.jpg",
+    "trailer": "https://www.youtube.com/watch?v=zBRkZZ6K1YU",
+    "streaming_es": [
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/la-la-land",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/la-la-land",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Movistar Plus+ Ficción Total"
+      },
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/pelicula/la-la-land",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/la-la-land",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/la-la-land",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/la-la-land",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/la-la-land",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/la-la-land",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/la-la-land",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/nlPCdZlHtRNcF6C9hzUH4ebmV1w.jpg",
+    "duracion": {
+      "minutos": 128
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:545611",
+    "tipo": "pelicula",
+    "titulo": "Todo a la vez en todas partes",
+    "titulo_original": "Everything Everywhere All at Once",
+    "anio": 2022,
+    "generos": [
+      "Acción",
+      "Aventura",
+      "Ciencia ficción"
+    ],
+    "sinopsis": "Cuando una ruptura interdimensional altera la realidad, Evelyn, una inmigrante china en Estados Unidos, se ve envuelta en una aventura salvaje en la que sólo ella puede salvar el mundo. Perdida en los mundos infinitos del multiverso, esta heroína inesperada debe canalizar sus nuevos poderes para luchar contra los extraños y desconcertantes peligros del multiverso mientras el destino del mundo pende de un hilo.",
+    "poster": "https://image.tmdb.org/t/p/w500/9R1zEZJkIah6GuLwFZWsuygn552.jpg",
+    "trailer": "https://www.youtube.com/watch?v=UcTzHfkgkRI",
+    "streaming_es": [
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/pelicula/everything-everywhere-all-at-once",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/everything-everywhere-all-at-once",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/everything-everywhere-all-at-once",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/everything-everywhere-all-at-once",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/everything-everywhere-all-at-once",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/everything-everywhere-all-at-once",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/everything-everywhere-all-at-once",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/fIwiFha3WPu5nHkBeMQ4GzEk0Hv.jpg",
+    "duracion": {
+      "minutos": 140
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:335984",
+    "tipo": "pelicula",
+    "titulo": "Blade Runner 2049",
+    "anio": 2017,
+    "generos": [
+      "Ciencia ficción",
+      "Drama"
+    ],
+    "sinopsis": "Han pasado 30 años desde los acontecimientos ocurridos en Blade Runner (1982). El oficial K, un blade runner caza-replicantes del Departamento de Policía de Los Ángeles, descubre un secreto que ha estado enterrado durante mucho tiempo y que tiene el potencial de llevar a la sociedad al caos. Su investigación le conducirá a la búsqueda del legendario Rick Deckard, un antiguo blade runner en paradero desconocido, que lleva desaparecido 30 años.",
+    "poster": "https://image.tmdb.org/t/p/w500/cOt8SQwrxpoTv9Bc3kyce3etkZX.jpg",
+    "trailer": "https://www.youtube.com/watch?v=Gt2BqOaKjcQ",
+    "streaming_es": [
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/pelicula/blade-runner-2049",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/blade-runner-2049",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/blade-runner-2049",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/blade-runner-2049",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/blade-runner-2049",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/blade-runner-2049",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/blade-runner-2049",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/gNdLJU9TxrpGx4dkZidjys3fyy0.jpg",
+    "duracion": {
+      "minutos": 164
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:906126",
+    "tipo": "pelicula",
+    "titulo": "La sociedad de la nieve",
+    "anio": 2023,
+    "generos": [
+      "Drama",
+      "Historia"
+    ],
+    "sinopsis": "El 13 de octubre de 1972, el vuelo 571 de la Fuerza Aérea Uruguaya, fletado para llevar a un equipo de rugby a Chile, se estrella en un glaciar en el corazón de los Andes.",
+    "poster": "https://image.tmdb.org/t/p/w500/9tkJPQb4X4VoU3S5nqLDohZijPj.jpg",
+    "trailer": "https://www.youtube.com/watch?v=XKM6LZGZVtI",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/pelicula/la-sociedad-de-la-nieve",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/md848EEPm3dHZOqwGxxTVwH2vu5.jpg",
+    "duracion": {
+      "minutos": 143
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:619264",
+    "tipo": "pelicula",
+    "titulo": "El hoyo",
+    "anio": 2019,
+    "generos": [
+      "Drama",
+      "Ciencia ficción",
+      "Suspense"
+    ],
+    "sinopsis": "Un lugar misterioso, una prisión indescriptible, un agujero muy profundo. Un número desconocido de niveles. Dos reclusos viviendo en cada nivel. Una plataforma descendente que contiene alimentos para todos ellos. Una lucha inhumana por la supervivencia, pero también una oportunidad para ser solidario.",
+    "poster": "https://image.tmdb.org/t/p/w500/qv30R1uDDKTLWDlNc3qi6MRdRf0.jpg",
+    "trailer": "https://www.youtube.com/watch?v=EVtlxpusGpM",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/pelicula/el-hoyo",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/3tkDMNfM2YuIAJlvGO6rfIzAnfG.jpg",
+    "duracion": {
+      "minutos": 95
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:361743",
+    "tipo": "pelicula",
+    "titulo": "Top Gun: Maverick",
+    "anio": 2022,
+    "generos": [
+      "Acción",
+      "Drama"
+    ],
+    "sinopsis": "Después de más de 30 años de servicio como uno de los mejores aviadores de la Armada, Pete \"Maverick\" Mitchell se encuentra dónde siempre quiso estar, empujando los límites como un valiente piloto de prueba y esquivando el alcance en su rango, que no le dejaría volar emplazándolo en tierra. Cuando se encuentra entrenando a un destacamento de graduados de Top Gun para una misión especializada, Maverick se encuentra allí con el teniente Bradley Bradshaw, el hijo de su difunto amigo \"Goose\".",
+    "poster": "https://image.tmdb.org/t/p/w500/AlWpEpQq0RgZIXVHAHZtFhEvRgd.jpg",
+    "trailer": "https://www.youtube.com/watch?v=zmFdhZ6gyUM",
+    "streaming_es": [
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/top-gun-maverick",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/top-gun-maverick",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Movistar Plus+ Ficción Total"
+      },
+      {
+        "plataforma": "SkyShowtime",
+        "url": "https://www.justwatch.com/es/pelicula/top-gun-maverick",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/top-gun-maverick",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/top-gun-maverick",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/top-gun-maverick",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/top-gun-maverick",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/top-gun-maverick",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/AaV1YIdWKnjAIAOe8UUKBFm327v.jpg",
+    "duracion": {
+      "minutos": 131
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:346698",
+    "tipo": "pelicula",
+    "titulo": "Barbie",
+    "anio": 2023,
+    "generos": [
+      "Comedia",
+      "Aventura",
+      "Fantasía"
+    ],
+    "sinopsis": "Barbie vive en Barbieland donde todo es ideal y lleno de música y color. Un buen día decide conocer el mundo real. Cuando el CEO de Mattel se entere, tratará de evitarlo a toda costa y devolver a Barbie a una caja.",
+    "poster": "https://image.tmdb.org/t/p/w500/fNtqD4BTFj0Bgo9lyoAtmNFzxHN.jpg",
+    "trailer": "https://www.youtube.com/watch?v=KIssh5pZ42g",
+    "streaming_es": [
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Max Amazon Channel"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Movistar Plus+ Ficción Total"
+      },
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Apple TV Store",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/barbie-2023",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/1esAE8sLJRWWFsLLeh5r3g2WanI.jpg",
+    "duracion": {
+      "minutos": 114
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:915935",
+    "tipo": "pelicula",
+    "titulo": "Anatomía de una caída",
+    "titulo_original": "Anatomie d'une chute",
+    "anio": 2023,
+    "generos": [
+      "Suspense",
+      "Misterio",
+      "Crimen"
+    ],
+    "sinopsis": "Sandra, una escritora alemana, vive con su marido Samuel y su hijo ciego, Daniel, en un chalé en medio de los Alpes franceses. Cuando Samuel fallece en misteriosas circunstancias, la investigación no puede determinar si se trata de un suicidio o de un homicidio. Sandra es arrestada y juzgada por asesinato, y el proceso pone su tumultuosa relación y su ambigua personalidad en el punto de mira.",
+    "poster": "https://image.tmdb.org/t/p/w500/vGzjaQyv4NPjhgI0hHmKXz3Orjs.jpg",
+    "trailer": "https://www.youtube.com/watch?v=ZxxtuWFftMg",
+    "streaming_es": [
+      {
+        "plataforma": "Filmin",
+        "url": "https://www.justwatch.com/es/pelicula/anatomie-dune-chute",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/pelicula/anatomie-dune-chute",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/pelicula/anatomie-dune-chute",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Max Amazon Channel"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/anatomie-dune-chute",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/pelicula/anatomie-dune-chute",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Movistar Plus+ Ficción Total"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/anatomie-dune-chute",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/anatomie-dune-chute",
+        "tipo": "rent",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/pelicula/anatomie-dune-chute",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Rakuten TV",
+        "url": "https://www.justwatch.com/es/pelicula/anatomie-dune-chute",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/lDVl2jf6VB8ODl1olZ6FLvOV1gX.jpg",
+    "duracion": {
+      "minutos": 151
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:60059",
+    "tipo": "serie",
+    "titulo": "Better Call Saul",
+    "anio": 2015,
+    "generos": [
+      "Crimen",
+      "Drama"
+    ],
+    "sinopsis": "Esta precuela de \"Breaking Bad\" nominada al Emmy narra la vida del picapleitos Jimmy McGill y su transformación en Saul Goodman, el abogado de moral laxa.",
+    "poster": "https://image.tmdb.org/t/p/w500/fC2HDm5t0kHl7mTm7jxMR31b7by.jpg",
+    "trailer": "https://www.youtube.com/watch?v=l1xIGfVFb-U",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/better-call-saul",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/serie/better-call-saul",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/rfxryDIv8huejujg4JueDJx8zCz.jpg",
+    "duracion": {
+      "minutos_episodio": 70,
+      "temporadas": 6
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:76331",
+    "tipo": "serie",
+    "titulo": "Succession",
+    "anio": 2018,
+    "generos": [
+      "Drama",
+      "Comedia"
+    ],
+    "sinopsis": "La serie gira en torno a la vida de la familia Roy. Son multimillonarios y poderosos, tienen todo lo que ansían, salvo vida familiar. Son dueños de una de la compañías de comunicaciones más exitosas del mundo. Su objetivo principal es hacer que el imperio crezca y, para ello, las lealtades se pondrán en juego.",
+    "poster": "https://image.tmdb.org/t/p/w500/xyHasySw0HQ4ndRWHvrpRTAsWXd.jpg",
+    "trailer": "https://www.youtube.com/watch?v=OzYxJV_rmE8",
+    "streaming_es": [
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/serie/succession",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/serie/succession",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Max Amazon Channel"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/serie/succession",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Movistar Plus+ Ficción Total"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/serie/succession",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/d87JXX3DLkRJMfm5StCmmnmhHuX.jpg",
+    "duracion": {
+      "minutos_episodio": 89,
+      "temporadas": 4
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:97546",
+    "tipo": "serie",
+    "titulo": "Ted Lasso",
+    "anio": 2020,
+    "generos": [
+      "Drama",
+      "Comedia"
+    ],
+    "sinopsis": "Un ingenuo entrenador de fútbol americano decide probar suerte en un club de fútbol inglés, pero su inexperiencia despierta recelo y desdén entre jugadores y aficionados. ¿Logrará conquistarlos con sus peculiares métodos?",
+    "poster": "https://image.tmdb.org/t/p/w500/6YUzArR2TElmGMj1HmnnfVlgunL.jpg",
+    "trailer": "https://www.youtube.com/watch?v=TMPUlfH-stE",
+    "streaming_es": [
+      {
+        "plataforma": "Apple TV+",
+        "url": "https://www.justwatch.com/es/serie/ted-lasso",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/4bG49jVR7NrCNQjahDUsDqvIwle.jpg",
+    "duracion": {
+      "minutos_episodio": 56,
+      "temporadas": 4
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:76479",
+    "tipo": "serie",
+    "titulo": "The Boys",
+    "anio": 2019,
+    "generos": [
+      "Sci-Fi & Fantasy",
+      "Action & Adventure"
+    ],
+    "sinopsis": "La serie tiene lugar en un mundo en el que los superhéroes representan el lado oscuro de la celebridad y la fama. Un grupo de vigilantes que se hacen llamar \"The Boys\" decide hacer todo lo posible por frenar a los superhéroes que están perjudicando a la sociedad, independientemente de los riesgos que ello conlleva.",
+    "poster": "https://image.tmdb.org/t/p/w500/5kgY14oisiHcJ4zq0Xgq1e97PHm.jpg",
+    "trailer": "https://www.youtube.com/watch?v=AD0qUhZpbfc",
+    "streaming_es": [
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/serie/the-boys",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/bq28ajZaoMyzEIm6REelqyqtEDZ.jpg",
+    "duracion": {
+      "minutos_episodio": 67,
+      "temporadas": 5
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:83867",
+    "tipo": "serie",
+    "titulo": "Andor",
+    "anio": 2022,
+    "generos": [
+      "Sci-Fi & Fantasy",
+      "Action & Adventure",
+      "Drama",
+      "War & Politics"
+    ],
+    "sinopsis": "Ambientada cinco años antes de los eventos de la película Rogue One,​ la serie sigue al espía Cassian Andor durante los años de formación de la Alianza Rebelde.​ La serie muestra la transformación de Andor, un ladrón que se convierte en revolucionario y finalmente se une a la Rebelión contra el Imperio Galáctico.",
+    "poster": "https://image.tmdb.org/t/p/w500/e3cWQzBxHK803AbZGjp1feQFgyS.jpg",
+    "trailer": "https://www.youtube.com/watch?v=pJntwnnIy6A",
+    "streaming_es": [
+      {
+        "plataforma": "Disney+",
+        "url": "https://www.justwatch.com/es/serie/andor",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/quCeAmVQHfsdcYkicbxZWVauCVb.jpg",
+    "duracion": {
+      "minutos_episodio": 49,
+      "temporadas": 2
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:95480",
+    "tipo": "serie",
+    "titulo": "Slow Horses",
+    "anio": 2022,
+    "generos": [
+      "Crimen",
+      "Drama",
+      "Misterio"
+    ],
+    "sinopsis": "Drama de espías con tintes de comedia negra centrado en las andanzas de un incompetente equipo de agentes del MI5 y en su jefe, el irreverente Jackson Lamb, a medida que desmontan los artificios del espionaje para defender Inglaterra de las fuerzas del mal.",
+    "poster": "https://image.tmdb.org/t/p/w500/3YwDLuIScomV0ea3RNL6kHpbi7Y.jpg",
+    "trailer": "https://www.youtube.com/watch?v=F9nxON8GzMA",
+    "streaming_es": [
+      {
+        "plataforma": "Apple TV+",
+        "url": "https://www.justwatch.com/es/serie/slow-horses",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/gPQppUnLx9vqPDLz3WwZ2HJsNbt.jpg",
+    "duracion": {
+      "minutos_episodio": 62,
+      "temporadas": 6
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:94605",
+    "tipo": "serie",
+    "titulo": "Arcane",
+    "anio": 2021,
+    "generos": [
+      "Animación",
+      "Action & Adventure",
+      "Sci-Fi & Fantasy"
+    ],
+    "sinopsis": "Con las dispares ciudades de Piltover y Zaun como telón de fondo, dos hermanas luchan en bandos opuestos de una guerra entre tecnologías mágicas y creencias enfrentadas.",
+    "poster": "https://image.tmdb.org/t/p/w500/87C0wecB8bHb1PsrKBI4kJiEkgV.jpg",
+    "trailer": "https://www.youtube.com/watch?v=0qSarZpylxs",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/arcane",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/5cvnxEHT3e39DvT6ARw4GNCFrB0.jpg",
+    "duracion": {
+      "minutos_episodio": 51,
+      "temporadas": 2
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:91239",
+    "tipo": "serie",
+    "titulo": "Los Bridgerton",
+    "anio": 2020,
+    "generos": [
+      "Drama"
+    ],
+    "sinopsis": "Ambientada en la alta sociedad londinense de principios del siglo XIX, la historia se centra en la familia Bridgerton, formada por varios hermanos y hermanas que se debaten entre el amor, el deber y la vocación. Cada temporada refleja la vida amorosa de un hermano Bridgerton, empezando por Daphne y siguiendo por Anthony, Colin y Benedict.",
+    "poster": "https://image.tmdb.org/t/p/w500/4MQf8yWM47OVjjtxRdhc1SzoZVE.jpg",
+    "trailer": "https://www.youtube.com/watch?v=gpv7ayf_tyE",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/los-bridgerton",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/6umsRLI7t0ydFwCl0JNEIO0q2LH.jpg",
+    "duracion": {
+      "minutos_episodio": 71,
+      "temporadas": 5
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:1438",
+    "tipo": "serie",
+    "titulo": "Bajo escucha",
+    "anio": 2002,
+    "generos": [
+      "Crimen",
+      "Drama"
+    ],
+    "sinopsis": "The Wire (Bajo escucha) es una aclamada serie de televisión creada por David Simon que retrata de forma realista y cruda el narcotráfico, la policía y la sociedad de la ciudad de Baltimore.",
+    "poster": "https://image.tmdb.org/t/p/w500/v5m7os416ER2a9dTE0M017KqRmZ.jpg",
+    "trailer": "https://www.youtube.com/watch?v=TnDRgiZASZ8",
+    "streaming_es": [
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/serie/bajo-escucha",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/serie/bajo-escucha",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Max Amazon Channel"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/serie/bajo-escucha",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Movistar Plus+ Ficción Total"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/serie/bajo-escucha",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/aQTtua5pG490fMfeKgtYg5B853e.jpg",
+    "duracion": {
+      "minutos_episodio": 94,
+      "temporadas": 5
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:46648",
+    "tipo": "serie",
+    "titulo": "True Detective",
+    "anio": 2014,
+    "generos": [
+      "Drama",
+      "Misterio"
+    ],
+    "sinopsis": "En Luisiana, en 1995, dos detectives investigan el atroz asesinato de una joven que fue sometida a un ritual pagano. En el año 2012, unos policías interrogan a estos dos detectives, dado que sospechan que el asesino de 1995 ha regresado",
+    "poster": "https://image.tmdb.org/t/p/w500/xZSuQm2KQQKoVKf31HgUWkjAVga.jpg",
+    "trailer": "https://www.youtube.com/watch?v=fVQUcaO4AvE",
+    "streaming_es": [
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/serie/true-detective",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Max",
+        "url": "https://www.justwatch.com/es/serie/true-detective",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Max Amazon Channel"
+      },
+      {
+        "plataforma": "Movistar Plus+",
+        "url": "https://www.justwatch.com/es/serie/true-detective",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado",
+        "plataforma_original": "Movistar Plus+ Ficción Total"
+      },
+      {
+        "plataforma": "Amazon Video",
+        "url": "https://www.justwatch.com/es/serie/true-detective",
+        "tipo": "buy",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/v8YFr8BbU9qsO8PYIulzTeM6Qk.jpg",
+    "duracion": {
+      "minutos_episodio": 76,
+      "temporadas": 5
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:95557",
+    "tipo": "serie",
+    "titulo": "INVENCIBLE",
+    "anio": 2021,
+    "generos": [
+      "Animación",
+      "Drama",
+      "Sci-Fi & Fantasy",
+      "Action & Adventure"
+    ],
+    "sinopsis": "Mark Grayson es un adolescente normal, excepto por el hecho de que su padre es el superhéroe más poderoso del planeta. Poco después de su decimoséptimo cumpleaños, Mark comienza a desarrollar sus propios poderes y entra en la tutela de su padre.",
+    "poster": "https://image.tmdb.org/t/p/w500/AdcfiT5FsjUooyP7CrKzEGmP9K1.jpg",
+    "trailer": "https://www.youtube.com/watch?v=83kGBULxVGI",
+    "streaming_es": [
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/serie/invincible",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/9qrroces8C6R9aKr08hACNPVXdZ.jpg",
+    "duracion": {
+      "minutos_episodio": 52,
+      "temporadas": 5
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:84958",
+    "tipo": "serie",
+    "titulo": "Loki",
+    "anio": 2021,
+    "generos": [
+      "Drama",
+      "Sci-Fi & Fantasy"
+    ],
+    "sinopsis": "Loki es llevado ante la misteriosa organización llamada AVT (Autoridad de Variación Temporal) después de los acontecimientos  ocurridos en  \"Avengers: Endgame (2019)\" y  se le da a elegir  enfrentarse a ser borrado de la existencia debido a que es una \"variante de tiempo\" o ayudar a arreglar la línea de tiempo y detener una amenaza mayor.",
+    "poster": "https://image.tmdb.org/t/p/w500/mLNTzVTF6lREjMWYaCVrhdvnF3C.jpg",
+    "trailer": "https://www.youtube.com/watch?v=uz1CREWyISo",
+    "streaming_es": [
+      {
+        "plataforma": "Disney+",
+        "url": "https://www.justwatch.com/es/serie/loki",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/q3jHCb4dMfYF6ojikKuHd6LscxC.jpg",
+    "duracion": {
+      "minutos_episodio": 59,
+      "temporadas": 2
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:62455",
+    "tipo": "serie",
+    "titulo": "Vis a vis",
+    "anio": 2015,
+    "generos": [
+      "Drama",
+      "Crimen"
+    ],
+    "sinopsis": "Su amante la manipuló para que cometiera varios delitos fiscales. Ahora, esta joven inocente deberá aprender a sobrevivir en un mundo nuevo y despiadado. Y rápido.",
+    "poster": "https://image.tmdb.org/t/p/w500/7mfPWKrNInkTbjVwp0EkaFYRHqD.jpg",
+    "trailer": "https://www.youtube.com/watch?v=ceNKwOvSVm8",
+    "streaming_es": [
+      {
+        "plataforma": "Disney+",
+        "url": "https://www.justwatch.com/es/serie/vis-a-vis",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/vis-a-vis",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      },
+      {
+        "plataforma": "Prime Video",
+        "url": "https://www.justwatch.com/es/serie/vis-a-vis",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/iukGFUQQWUdgwTGGDLb1Pw3GoZP.jpg",
+    "duracion": {
+      "minutos_episodio": 50,
+      "temporadas": 4
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
+  },
+  {
+    "id": "tmdb:76669",
+    "tipo": "serie",
+    "titulo": "Élite",
+    "anio": 2018,
+    "generos": [
+      "Crimen",
+      "Misterio",
+      "Drama"
+    ],
+    "sinopsis": "Las Encinas, un exclusivo colegio privado al que la élite social del país envía a sus hijos. Pero en el centro son admitidos tres adolescentes de familias humildes después de que un terremoto destruyera el colegio público en el que estudiaban. El choque de clases genera diversos problemas que se agravan hasta que, de repente, se produce un asesinato.",
+    "poster": "https://image.tmdb.org/t/p/w500/c07WqB99Igco0rua794q9k9QJYm.jpg",
+    "trailer": "https://www.youtube.com/watch?v=1T4P_ImXHcg",
+    "streaming_es": [
+      {
+        "plataforma": "Netflix",
+        "url": "https://www.justwatch.com/es/serie/elite",
+        "tipo": "subscription",
+        "fuente": "JustWatch",
+        "verificado_en": "2026-11-06",
+        "estado": "verificado"
+      }
+    ],
+    "backdrop": "https://image.tmdb.org/t/p/w1280/1qOA3kMtQO8bjnW8M2smjA8tp10.jpg",
+    "duracion": {
+      "minutos_episodio": 56,
+      "temporadas": 8
+    },
+    "fuentes": [
+      "TMDB",
+      "JustWatch"
+    ],
+    "verificado_en": "2026-11-06"
   }
 ]
