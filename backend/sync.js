@@ -25,8 +25,8 @@ import {
 } from "./merge.js";
 
 export const config = {
-  url: "",
-  anonKey: "",
+  url: "https://rqfahwijrtenxijawmyn.supabase.co",
+  anonKey: "sb_publishable_2FvW_TYWHI9vMmI0zo3ePQ_zqRt0ycj",
   redirectTo: "https://scriptsalmorejo.github.io/cine-web/",
 };
 

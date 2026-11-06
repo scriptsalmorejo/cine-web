@@ -36,7 +36,8 @@ const FILTRO_ALIAS = {
 };
 
 function uid() {
-  return "t_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  if (typeof crypto !== "undefined" && crypto.randomUUID) return "local:" + crypto.randomUUID();
+  return "local:" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
 /** Nombre canónico para snapshot de suscripción (lista/chips). */
@@ -350,6 +351,70 @@ function persist() {
   Storage.save(state.db);
 }
 
+/* ---------- Sync (Backend) ---------- */
+state.auth = { user: null, configured: false, ready: false };
+
+function syncApi() {
+  return globalThis.CineSync || null;
+}
+
+function fichaParaSync(id) {
+  const ficha = state.db.fichas[id];
+  if (!ficha) return undefined;
+  if (ficha.origen === "usuario" || String(id).startsWith("local:")) {
+    // El front nunca escribe streaming_es ni verificado_en a la nube.
+    const { streaming_es, verificado_en, ...rest } = ficha;
+    void streaming_es;
+    void verificado_en;
+    return { ...rest, origen: "usuario" };
+  }
+  return undefined;
+}
+
+async function syncPush(cambio) {
+  const sync = syncApi();
+  if (!sync || !state.auth.user) return;
+  try {
+    const result = await sync.push(cambio);
+    if (result && result.ok === false && !result.skipped) {
+      console.warn("sync.push", result.error || result);
+    }
+  } catch (err) {
+    console.warn("sync.push", err);
+  }
+}
+
+async function syncPrefs() {
+  const sync = syncApi();
+  if (!sync || !state.auth.user) return;
+  try {
+    await sync.savePrefs(state.db.misPlataformas || []);
+  } catch (err) {
+    console.warn("sync.savePrefs", err);
+  }
+}
+
+function renderAuth() {
+  const entrar = document.getElementById("btn-entrar");
+  const session = document.getElementById("auth-session");
+  const email = document.getElementById("auth-email");
+  const note = document.getElementById("lista-persist-note");
+  if (!entrar || !session) return;
+  if (state.auth.user) {
+    entrar.hidden = true;
+    session.hidden = false;
+    email.textContent = state.auth.user.email || "Sesión iniciada";
+    email.title = state.auth.user.email || "";
+    if (note) note.textContent = "Con sesión, tu lista se sincroniza entre dispositivos. También queda una copia en este navegador.";
+  } else {
+    entrar.hidden = false;
+    session.hidden = true;
+    email.textContent = "";
+    if (note) note.textContent = "Tu lista se guarda en este navegador. Con sesión, también se sincroniza entre dispositivos.";
+  }
+}
+
+
 function getMerged(id) {
   const row = state.db.lista.find((x) => x.id === id);
   const ficha = state.db.fichas[id] || {};
@@ -398,10 +463,19 @@ function asSinMarcar(ficha) {
   };
 }
 
-/** Todas las fichas visibles: lista del usuario + catálogo sin marcar. */
+/** Todas las fichas visibles: lista del usuario + catálogo/custom sin marcar. */
 function todosLosTitulos() {
   const marked = state.db.lista.map((row) => getMerged(row.id)).filter(Boolean);
+  const enLista = idsEnListaSet();
   const unmarked = catalogoFueraDeLista().map(asSinMarcar);
+  const seen = new Set(unmarked.map((t) => t.id));
+  for (const [id, ficha] of Object.entries(state.db.fichas || {})) {
+    if (enLista.has(id) || seen.has(id)) continue;
+    if (esFichaUsuario(ficha) || String(id).startsWith("local:")) {
+      unmarked.push(asSinMarcar({ ...ficha, id }));
+      seen.add(id);
+    }
+  }
   return marked.concat(unmarked);
 }
 
@@ -712,7 +786,12 @@ function addOrUpdateFromForm(data) {
   } else {
     state.db.lista.unshift(row);
   }
+  // Altas manuales nuevas: marcar origen usuario sin tocar streaming_es/verificado_en
+  if (!existing && (String(id).startsWith("local:") || !state.catalogo.some((f) => f.id === id))) {
+    state.db.fichas[id] = { ...ficha, origen: ficha.origen || "usuario", streaming_es: Array.isArray(ficha.streaming_es) ? ficha.streaming_es : [] };
+  }
   persist();
+  syncPush({ op: "upsert", item: row, ficha: fichaParaSync(id) });
   if (row.estado === "vista" && existing?.estado !== "vista") mostrarPuntuacion(id);
   else if (row.estado !== "vista" && state.scoreId === id) cerrarPuntuacion();
   return row;
@@ -726,8 +805,10 @@ function addFichaToLista(id) {
   }
   const ficha = state.db.fichas[id];
   if (!ficha) return false;
-  state.db.lista.unshift(Storage.listaFromSeedFicha(ficha));
+  const row = Storage.listaFromSeedFicha(ficha);
+  state.db.lista.unshift(row);
   persist();
+  syncPush({ op: "upsert", item: row, ficha: fichaParaSync(id) });
   return true;
 }
 
@@ -766,6 +847,7 @@ function addFromExplorar(id, estado, opciones = {}) {
   });
   state.db.lista.unshift(row);
   persist();
+  syncPush({ op: "upsert", item: row, ficha: fichaParaSync(id) });
   toast(opciones.favorita ? "Añadida a pendientes y favoritas" : esVista ? "Añadida como vista" : "Añadida a pendientes");
   if (esVista) mostrarPuntuacion(id);
   return true;
@@ -784,9 +866,12 @@ function getMergedOrCatalog(id) {
 }
 
 function borrarDeLista(id) {
+  const existing = state.db.lista.find((t) => t.id === id);
+  const when = existing ? actualizadoAhora(existing) : new Date().toISOString();
   if (state.scoreId === id) cerrarPuntuacion();
   state.db.lista = state.db.lista.filter((t) => t.id !== id);
   persist();
+  syncPush({ op: "borrar", id, actualizado_en: when });
 }
 
 function toggleEstado(id) {
@@ -803,6 +888,7 @@ function toggleEstado(id) {
   }
   t.actualizado_en = actualizadoAhora(t);
   persist();
+  syncPush({ op: "upsert", item: t, ficha: fichaParaSync(id) });
 }
 
 function toggleFavorita(id) {
@@ -811,6 +897,7 @@ function toggleFavorita(id) {
   t.favorita = !t.favorita;
   t.actualizado_en = actualizadoAhora(t);
   persist();
+  syncPush({ op: "upsert", item: t, ficha: fichaParaSync(id) });
 }
 
 function mostrarPuntuacion(id) {
@@ -846,6 +933,7 @@ function guardarPuntuacion(value) {
   row.puntuacion = value;
   row.actualizado_en = actualizadoAhora(row);
   persist();
+  syncPush({ op: "upsert", item: row, ficha: fichaParaSync(row.id) });
   cerrarPuntuacion();
   renderAll();
   if ($("#modal-detalle").classList.contains("open") && state.detalleId === row.id) openDetalle(getMerged(row.id));
@@ -907,15 +995,27 @@ function posterHtml(t) {
   return `<div class="poster-fallback">Sin póster</div>`;
 }
 
-function plataformasHtml(plataformas) {
-  if (!plataformas?.length) return `<span class="chip">Sin suscripción detectada</span>`;
-  return plataformas
-    .map((p) => {
-      const warn = p.verificacion !== "verificado";
-      const label = warn ? `${escapeHtml(p.nombre)} · Por verificar` : escapeHtml(p.nombre);
-      return `<span class="chip ${warn ? "chip-warn" : "chip-ok"}">${label}</span>`;
-    })
-    .join("");
+function plataformasHtml(plataformas, opts = {}) {
+  if (plataformas?.length) {
+    return plataformas
+      .map((p) => {
+        const warn = p.verificacion !== "verificado";
+        const label = warn ? `${escapeHtml(p.nombre)} · Por verificar` : escapeHtml(p.nombre);
+        return `<span class="chip ${warn ? "chip-warn" : "chip-ok"}">${label}</span>`;
+      })
+      .join("");
+  }
+  if (opts.porVerificar) return `<span class="chip chip-pending">Plataformas por verificar</span>`;
+  return `<span class="chip">Sin suscripción detectada</span>`;
+}
+
+function esFichaUsuario(fichaOrId) {
+  if (!fichaOrId) return false;
+  if (typeof fichaOrId === "string") {
+    const f = state.db.fichas[fichaOrId];
+    return Boolean(f && (f.origen === "usuario" || String(fichaOrId).startsWith("local:")));
+  }
+  return fichaOrId.origen === "usuario" || String(fichaOrId.id || "").startsWith("local:");
 }
 
 function renderStats() {
@@ -995,6 +1095,7 @@ function renderGrid() {
       !sinMarcar && t.tipo === "serie" && t.temporada != null ? `T${t.temporada}` : null,
       !sinMarcar && t.puntuacion != null ? `★ ${t.puntuacion}/10` : null].filter(Boolean).join(" · ");
     const platforms = plataformasCanonicas(t.plataformas);
+    const porVerificar = esFichaUsuario(t) && !(t.streaming_es || []).length && !platforms.length;
     const extraPlatforms = platforms.length > 2 ? `<span class="chip">+${platforms.length - 2} en ficha</span>` : "";
     return `
       <article class="card" data-id="${escapeHtml(t.id)}" data-mode="${sinMarcar ? "sin-marcar" : "lista"}" aria-label="${title}">
@@ -1012,7 +1113,7 @@ function renderGrid() {
           <h3 class="card-title"><button class="title-button" type="button" data-action="detalle">${title}</button></h3>
           <div class="meta">${escapeHtml(metaBits)}</div>
           <div class="chips genres">${(t.generos || []).slice(0, 2).map((g) => `<span class="chip">${escapeHtml(g)}</span>`).join("")}</div>
-          <div class="chips platforms">${plataformasHtml(platforms.slice(0, 2))}${extraPlatforms}</div>
+          <div class="chips platforms">${plataformasHtml(platforms.slice(0, 2), { porVerificar })}${extraPlatforms}</div>
           <div class="card-actions quick-actions">
             <button type="button" class="btn ${!sinMarcar && t.estado === "pendiente" ? "is-selected" : ""}" data-action="estado-pendiente" aria-label="Marcar pendiente: ${title}" aria-pressed="${!sinMarcar && t.estado === "pendiente"}">＋ Pendiente</button>
             <button type="button" class="btn ${!sinMarcar && t.estado === "vista" ? "is-selected is-vista" : ""}" data-action="estado-vista" aria-label="Marcar vista: ${title}" aria-pressed="${!sinMarcar && t.estado === "vista"}">✓ Vista</button>
@@ -1027,6 +1128,7 @@ function renderGrid() {
 }
 
 function renderAll() {
+  renderAuth();
   renderHero();
   renderStats();
   renderFiltrosOpciones();
@@ -1244,7 +1346,12 @@ function openDetalle(t) {
         .join(" · ");
 
   const renderGroup = (items) => {
-    if (!items.length) return `<p class="meta" style="margin:0">—</p>`;
+    if (!items.length) {
+      if (esFichaUsuario(t) && !(t.streaming_es || []).length) {
+        return `<p class="meta" style="margin:0"><span class="chip chip-pending">Plataformas por verificar</span></p>`;
+      }
+      return `<p class="meta" style="margin:0">—</p>`;
+    }
     return `<div class="streaming-groups">${items.map((p) => `
       <div class="streaming-platform">
         <h5 class="chip streaming-name">${escapeHtml(p.nombre)}</h5>
@@ -1346,6 +1453,224 @@ function openDetalle(t) {
   openModal("#modal-detalle");
 }
 
+
+function openLogin() {
+  const status = $("#login-status");
+  if (status) status.textContent = "";
+  const email = $("#login-email");
+  if (email) email.value = "";
+  openModal("#modal-login");
+}
+
+async function onLoginSubmit(e) {
+  e.preventDefault();
+  const sync = syncApi();
+  const status = $("#login-status");
+  const submit = $("#login-submit");
+  const address = String($("#login-email")?.value || "").trim();
+  if (!sync) {
+    if (status) status.textContent = "El acceso en la nube aún no está disponible en esta copia.";
+    return;
+  }
+  if (!address) {
+    if (status) status.textContent = "Escribe tu correo.";
+    return;
+  }
+  if (submit) submit.disabled = true;
+  if (status) status.textContent = "Enviando enlace…";
+  try {
+    const result = await sync.login(address);
+    if (result?.ok) {
+      if (status) status.textContent = "Revisa tu correo y abre el enlace para entrar. Puedes cerrar esta ventana.";
+      toast("Enlace enviado. Revisa tu correo.");
+    } else if (result?.skipped) {
+      if (status) status.textContent = "Falta configurar el acceso en la nube.";
+    } else {
+      if (status) status.textContent = result?.error || "No se pudo enviar el enlace.";
+    }
+  } catch (err) {
+    if (status) status.textContent = err?.message || "No se pudo enviar el enlace.";
+  } finally {
+    if (submit) submit.disabled = false;
+  }
+}
+
+async function logoutUsuario() {
+  const sync = syncApi();
+  if (sync) {
+    try { await sync.logout(); } catch (err) { console.warn(err); }
+  }
+  state.auth.user = null;
+  renderAuth();
+  toast("Sesión cerrada. Tu lista local sigue aquí.");
+}
+
+function openBuscarTitulo() {
+  const status = $("#tmdb-status");
+  const results = $("#tmdb-results");
+  if (status) status.textContent = "";
+  if (results) results.innerHTML = "";
+  const q = $("#tmdb-q");
+  if (q) q.value = "";
+  openModal("#modal-buscar");
+}
+
+async function onBuscarTmdb(e) {
+  e.preventDefault();
+  const sync = syncApi();
+  const status = $("#tmdb-status");
+  const box = $("#tmdb-results");
+  const q = String($("#tmdb-q")?.value || "").trim();
+  if (!q) return;
+  if (!sync || !state.auth.user) {
+    if (status) status.textContent = "Inicia sesión para buscar títulos en TMDB.";
+    return;
+  }
+  if (status) status.textContent = "Buscando…";
+  if (box) box.innerHTML = "";
+  try {
+    const result = await sync.buscar(q, { tipo: $("#tmdb-tipo")?.value || "multi" });
+    if (result?.skipped) {
+      if (status) status.textContent = "Inicia sesión para buscar.";
+      return;
+    }
+    if (!result?.ok) {
+      if (status) status.textContent = result?.error || "No se pudo buscar.";
+      return;
+    }
+    const items = result.resultados || [];
+    if (!items.length) {
+      if (status) status.textContent = "Sin resultados. Prueba otro título.";
+      return;
+    }
+    if (status) status.textContent = `${items.length} resultado${items.length === 1 ? "" : "s"}`;
+    if (box) {
+      box.innerHTML = items.map((item) => {
+        const payload = encodeURIComponent(JSON.stringify({
+          id: item.id,
+          tipo: item.tipo,
+          titulo: item.titulo,
+          titulo_original: item.titulo_original || "",
+          anio: item.anio,
+          sinopsis: item.sinopsis || "",
+          poster: item.poster || "",
+          backdrop: item.backdrop || "",
+        }));
+        const meta = [item.tipo === "serie" ? "Serie" : "Película", item.anio || "¿?"].join(" · ");
+        const poster = item.poster
+          ? `<img src="${escapeHtml(item.poster)}" alt="" width="52" height="78" loading="lazy" />`
+          : `<div class="tmdb-poster-fallback" aria-hidden="true">Sin póster</div>`;
+        return `<article class="tmdb-result">
+          ${poster}
+          <div><h3>${escapeHtml(item.titulo || "Sin título")}</h3><p class="meta">${escapeHtml(meta)}</p></div>
+          <button type="button" class="btn btn-primary" data-tmdb-add="${payload}">Añadir</button>
+        </article>`;
+      }).join("");
+    }
+  } catch (err) {
+    if (status) status.textContent = err?.message || "No se pudo buscar.";
+  }
+}
+
+function addFromTmdbResult(resultado) {
+  const id = String(resultado?.id || "");
+  if (!id) { toast("Falta el id del título"); return false; }
+  if (state.db.lista.some((x) => x.id === id)) {
+    toast("Ya estaba en tu lista");
+    return false;
+  }
+  // Si ya está en el catálogo verificado, reutiliza esa ficha.
+  const catalogada = state.catalogo.find((f) => f.id === id);
+  if (catalogada) {
+    state.db.fichas[id] = { ...(state.db.fichas[id] || {}), ...catalogada };
+    const ok = addFromExplorar(id, "pendiente");
+    if (ok) {
+      closeModal("#modal-buscar");
+      renderAll();
+    }
+    return ok;
+  }
+  const ficha = {
+    id,
+    tipo: resultado.tipo === "serie" ? "serie" : "pelicula",
+    titulo: String(resultado.titulo || "").trim() || "Sin título",
+    titulo_original: String(resultado.titulo_original || ""),
+    anio: resultado.anio != null && resultado.anio !== "" ? Number(resultado.anio) : null,
+    generos: [],
+    sinopsis: String(resultado.sinopsis || ""),
+    poster: resultado.poster || "",
+    backdrop: resultado.backdrop || "",
+    trailer: "",
+    streaming_es: [],
+    duracion: null,
+    temporadas: null,
+    temporada_interes: null,
+    nota: "",
+    fuentes: ["tmdb-search"],
+    origen: "usuario",
+    en_cines: false,
+    estreno_es: null,
+    popularidad_fuente: "",
+    extras_info: {},
+  };
+  // Nunca escribir verificado_en desde el front.
+  state.db.fichas[id] = ficha;
+  const now = new Date().toISOString();
+  const row = Storage.normalizeListaItem({
+    id,
+    estado: "pendiente",
+    favorita: false,
+    puntuacion: null,
+    notas: "",
+    anadido_en: now,
+    actualizado_en: now,
+    visto_en: null,
+    plataformas: [],
+    temporada: null,
+  });
+  state.db.lista.unshift(row);
+  persist();
+  syncPush({ op: "upsert", item: row, ficha: fichaParaSync(id) });
+  closeModal("#modal-buscar");
+  renderAll();
+  toast("Añadida a pendientes · Plataformas por verificar");
+  return true;
+}
+
+async function bootSync() {
+  const sync = syncApi();
+  renderAuth();
+  if (!sync) {
+    state.auth.ready = true;
+    return;
+  }
+  try {
+    const boot = await sync.init();
+    state.auth.configured = Boolean(boot?.configured);
+    state.auth.user = boot?.user || null;
+    renderAuth();
+    sync.onAuthChange(({ user }) => {
+      state.auth.user = user || null;
+      renderAuth();
+    });
+    if (boot?.user) {
+      const remoto = await sync.syncAll(state.db);
+      if (remoto?.applied) {
+        state.db.lista = remoto.lista;
+        state.db.fichas = remoto.fichas;
+        if (remoto.misPlataformas) state.db.misPlataformas = normalizarMisPlataformas(remoto.misPlataformas);
+        persist();
+        if (remoto.switched) toast("Sesión de otra cuenta: cargada su lista");
+      }
+    }
+  } catch (err) {
+    console.warn("bootSync", err);
+  } finally {
+    state.auth.ready = true;
+    renderAuth();
+  }
+}
+
 function bindEvents() {
   // El alto real del encabezado mantiene los filtros pegados también en móvil.
   const syncHeaderHeight = () => document.documentElement.style.setProperty("--header-height", $(".topbar").getBoundingClientRect().height + "px");
@@ -1366,12 +1691,30 @@ function bindEvents() {
     if (!e.target.closest(".library-menu")) $(".library-menu").open = false;
     if (e.target.closest(".top-actions button")) $(".library-menu").open = false;
   });
-  $("#btn-añadir").addEventListener("click", () => openForm(null));
+  $("#btn-añadir").addEventListener("click", () => {
+    if (state.auth.user) openBuscarTitulo();
+    else openForm(null);
+  });
+  $("#btn-entrar")?.addEventListener("click", () => openLogin());
+  $("#btn-salir")?.addEventListener("click", () => logoutUsuario());
+  $("#form-login")?.addEventListener("submit", onLoginSubmit);
+  $("#modal-login")?.addEventListener("click", (e) => { if (e.target === e.currentTarget) closeModal("#modal-login"); });
+  $("#form-buscar-tmdb")?.addEventListener("submit", onBuscarTmdb);
+  $("#modal-buscar")?.addEventListener("click", (e) => { if (e.target === e.currentTarget) closeModal("#modal-buscar"); });
+  $("#btn-alta-manual")?.addEventListener("click", () => { closeModal("#modal-buscar"); openForm(null); });
+  $("#tmdb-results")?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-tmdb-add]");
+    if (!btn) return;
+    const raw = btn.dataset.tmdbAdd;
+    try { addFromTmdbResult(JSON.parse(decodeURIComponent(raw))); }
+    catch (err) { console.warn(err); toast("No se pudo añadir el título"); }
+  });
   $("#btn-mis-plataformas").addEventListener("click", abrirMisPlataformas);
   $("#form-mis-plataformas").addEventListener("submit", (e) => {
     e.preventDefault();
     state.db.misPlataformas = normalizarMisPlataformas($$("#platform-choices input:checked").map((input) => input.value));
     persist();
+    syncPrefs();
     closeModal("#modal-plataformas");
     renderAll();
     toast("Tus plataformas se han guardado");
@@ -1410,6 +1753,18 @@ function bindEvents() {
       state.db.misPlataformas = normalizarMisPlataformas([...(state.db.misPlataformas || []), ...imported.misPlataformas]);
       if (imported.orden) state.db.orden = state.filtros.orden = imported.orden;
       persist();
+      const sync = syncApi();
+      if (sync && state.auth.user) {
+        try {
+          const remoto = await sync.syncAll(state.db);
+          if (remoto?.applied) {
+            state.db.lista = remoto.lista;
+            state.db.fichas = remoto.fichas;
+            if (remoto.misPlataformas) state.db.misPlataformas = normalizarMisPlataformas(remoto.misPlataformas);
+            persist();
+          }
+        } catch (err) { console.warn("syncAll import", err); }
+      }
       renderAll();
       toast(`Importados ${imported.lista.length} títulos`);
     } catch (err) {
@@ -1424,11 +1779,14 @@ function bindEvents() {
       )
     )
       return;
+    const ids = state.db.lista.map((t) => t.id);
+    const when = new Date().toISOString();
     const seed = await loadSeedArray();
     const catalogExtra = await loadCatalogoArray();
     aplicarCatalogoUnion(seed, catalogExtra);
     aplicarEstadoFresco();
     cerrarPuntuacion();
+    if (ids.length) syncPush({ op: "vaciar", ids, actualizado_en: when });
     renderAll();
     toast("Lista vaciada");
   });
@@ -1589,6 +1947,8 @@ function bindEvents() {
       closeModal("#modal-plataformas");
       closeModal("#modal-form");
       closeModal("#modal-detalle");
+      closeModal("#modal-login");
+      closeModal("#modal-buscar");
     }
   });
 }
@@ -1606,5 +1966,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     state.db = Storage.empty();
     state.catalogo = [];
   }
+  await bootSync();
   renderAll();
 });

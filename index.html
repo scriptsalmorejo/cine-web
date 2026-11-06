@@ -6,7 +6,7 @@
   <meta name="description" content="Lista personal de películas y series en España, con catálogo verificado (TMDB + JustWatch)." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <title>Cine Web — Películas y series</title>
-  <link rel="stylesheet" href="styles.css?v=20261107a" />
+  <link rel="stylesheet" href="styles.css?v=20261108a" />
 </head>
 <body>
   <a class="skip-link" href="#grid">Saltar al catálogo</a>
@@ -24,6 +24,13 @@
       </div>
       <div class="header-end">
         <div class="stats" id="stats" aria-live="polite"></div>
+        <div class="auth-slot" id="auth-slot">
+          <button type="button" class="btn" id="btn-entrar" aria-haspopup="dialog">Entrar</button>
+          <div class="auth-session" id="auth-session" hidden>
+            <span class="auth-email" id="auth-email"></span>
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-salir">Salir</button>
+          </div>
+        </div>
         <details class="library-menu">
           <summary class="btn library-toggle" aria-label="Opciones de mi lista"><span aria-hidden="true">☰</span><span>Mi lista</span></summary>
           <div class="top-actions">
@@ -34,7 +41,7 @@
             <button type="button" class="btn" id="btn-importar">Importar JSON</button>
             <input type="file" id="file-import" aria-label="Seleccionar archivo JSON para importar" accept="application/json,.json" class="sr-only" />
             <button type="button" class="btn btn-danger" id="btn-reseedar" title="Quita todos los títulos de tu lista; quedan Sin marcar">Vaciar mi lista</button>
-            <p>Tu lista se guarda solo en este navegador.</p>
+            <p id="lista-persist-note">Tu lista se guarda en este navegador. Con sesión, también se sincroniza entre dispositivos.</p>
           </div>
         </details>
       </div>
@@ -189,8 +196,62 @@
     </div>
   </div>
 
-  <script src="seed.js?v=20261107a"></script>
-  <script src="catalogo.js?v=20261107a"></script>
-  <script src="app.js?v=20261107a"></script>
+
+  <div class="modal-backdrop" id="modal-login" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-login-title">
+    <div class="modal modal-sm">
+      <header>
+        <h2 id="modal-login-title">Entrar</h2>
+        <button type="button" class="btn btn-ghost btn-sm" data-close="#modal-login" aria-label="Cerrar entrar">✕</button>
+      </header>
+      <form id="form-login">
+        <div class="content">
+          <p class="platforms-description" id="login-description">Te enviamos un enlace mágico al correo. Sin contraseña. La web funciona igual sin iniciar sesión.</p>
+          <label class="full">Correo electrónico
+            <input class="field" id="login-email" type="email" required autocomplete="email" inputmode="email" placeholder="tu@correo.com" />
+          </label>
+          <p class="meta" id="login-status" role="status" aria-live="polite"></p>
+        </div>
+        <footer>
+          <button type="button" class="btn" data-close="#modal-login">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="login-submit">Enviar enlace</button>
+        </footer>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-buscar" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-buscar-title">
+    <div class="modal modal-lg">
+      <header>
+        <h2 id="modal-buscar-title">Añadir título</h2>
+        <button type="button" class="btn btn-ghost btn-sm" data-close="#modal-buscar" aria-label="Cerrar añadir título">✕</button>
+      </header>
+      <form id="form-buscar-tmdb">
+        <div class="content">
+          <p class="platforms-description">Busca en TMDB (España). Los títulos nuevos llegan con plataformas «por verificar» hasta que Catalogo Cine las confirme.</p>
+          <div class="tmdb-search-row">
+            <label class="full grow">Título
+              <input class="field" id="tmdb-q" type="search" required maxlength="120" placeholder="Parásitos, Dune…" autocomplete="off" />
+            </label>
+            <label>Tipo
+              <select class="select" id="tmdb-tipo">
+                <option value="multi">Todos</option>
+                <option value="pelicula">Películas</option>
+                <option value="serie">Series</option>
+              </select>
+            </label>
+            <button type="submit" class="btn btn-primary" id="tmdb-submit">Buscar</button>
+          </div>
+          <p class="meta" id="tmdb-status" role="status" aria-live="polite"></p>
+          <div class="tmdb-results" id="tmdb-results" aria-live="polite"></div>
+          <p class="meta"><button type="button" class="btn btn-ghost btn-sm" id="btn-alta-manual">O añadir a mano</button></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="backend/sync.js?v=20261108a"></script>
+  <script src="seed.js?v=20261108a"></script>
+  <script src="catalogo.js?v=20261108a"></script>
+  <script src="app.js?v=20261108a"></script>
 </body>
 </html>
