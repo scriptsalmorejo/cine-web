@@ -1,0 +1,8 @@
+{
+  "name": "cine-web-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test merge.test.js"
+  }
+}
