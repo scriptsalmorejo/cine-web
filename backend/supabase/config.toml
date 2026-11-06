@@ -1,0 +1,12 @@
+# Proyecto local de Supabase CLI. El ref real se enlaza con `supabase link`.
+project_id = "cine-web"
+
+[functions.tmdb-search]
+verify_jwt = true
+
+# El worker de verificación no tiene JWT de usuario: se autoriza con VERIFY_TOKEN.
+[functions.verificacion-pendientes]
+verify_jwt = false
+
+[functions.verificacion]
+verify_jwt = false
